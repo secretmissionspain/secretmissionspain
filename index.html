@@ -58,7 +58,7 @@
         }
         
         .countdown {
-            font-size: clamp(24px, 7vw, 48px);
+            font-size: clamp(36px, 9vw, 60px); /* Aumentado el tamaño de los caracteres */
             margin: 20px 0;
             font-weight: bold;
             text-shadow: 0 0 10px #0f0;
@@ -90,10 +90,19 @@
         
         .warning {
             color: #f00;
-            margin-top: 15px;
-            font-size: clamp(10px, 2vw, 14px);
+            font-size: clamp(32px, 6vw, 48px);
             animation: blink 1s infinite;
             display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px 10px;
+            z-index: 90;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 0 0 10px #f00;
         }
         
         .message-box {
@@ -136,6 +145,11 @@
             50% { opacity: 0; }
             100% { opacity: 1; }
         }
+
+        @keyframes fadeout {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
         
         /* Media queries adicionales para ajustes específicos */
         @media (max-width: 480px) {
@@ -150,6 +164,11 @@
             
             .message-box {
                 padding: 10px;
+            }
+            
+            .warning {
+                font-size: clamp(24px, 5vw, 36px);
+                padding: 20px 5px;
             }
         }
     </style>
@@ -172,9 +191,10 @@
         
         <div class="message-box" id="message-box">
             <span id="typed-text"></span><span class="cursor"></span>
-            <div class="warning" id="self-destruct">ESTE MENSAJE SE AUTODESTRUIRÁ EN 60 SEGUNDOS</div>
         </div>
     </div>
+    
+    <div class="warning" id="self-destruct">ESTE MENSAJE SE AUTODESTRUIRÁ EN 60 SEGUNDOS</div>
     
     <script>
         // Función para calcular el tiempo restante
@@ -190,15 +210,32 @@
                 const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
                 
                 document.getElementById('countdown').innerHTML = 
-                    `${days}D : ${hours}H : ${minutes}M : ${seconds}S`;
+                    `${days}D:${hours}H:${minutes}M:${seconds}S`;
             } else {
+                // Iniciar efecto de autodestrucción al finalizar la cuenta regresiva
                 document.getElementById('countdown').innerHTML = "MISIÓN INICIADA";
+                startSelfDestruction();
             }
         }
         
         // Actualizar el contador cada segundo
         updateCountdown();
         setInterval(updateCountdown, 1000);
+
+        // Función para iniciar el efecto de autodestrucción
+        function startSelfDestruction() {
+            const elementsToFade = document.querySelectorAll('.container, .scanning');
+            elementsToFade.forEach(element => {
+                element.style.animation = 'fadeout 3s forwards';
+            });
+
+            setTimeout(() => {
+                document.body.style.backgroundColor = "#fff";
+                setTimeout(() => {
+                    document.body.style.backgroundColor = "#000";
+                }, 200);
+            }, 3000);
+        }
         
         // Simular efecto de terminal para el título
         const title = document.querySelector('h1');
@@ -239,10 +276,6 @@
                 // Mostrar mensaje de autodestrucción cuando se complete el mensaje
                 document.getElementById('self-destruct').style.display = 'block';
                 
-                // Asegurar que el mensaje de autodestrucción es visible
-                const messageBox = document.getElementById('message-box');
-                messageBox.scrollTop = messageBox.scrollHeight;
-                
                 // Iniciar un temporizador para simular la cuenta regresiva de autodestrucción
                 let countdown = 60;
                 const selfDestruct = document.getElementById('self-destruct');
@@ -254,13 +287,8 @@
                         setTimeout(updateSelfDestruct, 1000);
                     } else {
                         selfDestruct.innerHTML = "AUTODESTRUCCIÓN INICIADA";
-                        // Simular la autodestrucción (solo visual)
-                        setTimeout(() => {
-                            document.body.style.backgroundColor = "#fff";
-                            setTimeout(() => {
-                                document.body.style.backgroundColor = "#000";
-                            }, 200);
-                        }, 1000);
+                        // Iniciar efecto de autodestrucción
+                        startSelfDestruction();
                     }
                 };
                 
