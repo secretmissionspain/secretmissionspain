@@ -60,7 +60,7 @@
         }
         
         .countdown {
-            font-size: clamp(36px, 9vw, 60px); /* Aumentado el tamaño de los caracteres */
+            font-size: clamp(24px, 7vw, 48px);
             margin: 20px 0;
             font-weight: bold;
             text-shadow: 0 0 10px #0f0;
@@ -128,10 +128,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: clamp(50px, 15vw, 150px); /* Muy grande para toda la pantalla */
-            color: rgba(0, 255, 0, 0.1); /* Color translúcido */
+            color: rgba(255, 0, 0, 0.1); /* Color translúcido rojo */
             z-index: 1;
             pointer-events: none;
-            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
         }
         
         @keyframes scan {
@@ -175,7 +175,7 @@
 </head>
 <body>
     <div class="scanning"></div>
-    <div class="countdown-overlay" id="countdown-overlay">CARGANDO...</div> <!-- Cuenta regresiva en el fondo -->
+    <div class="countdown-overlay" id="countdown-overlay">CARGANDO...</div> <!-- Cuenta regresiva de autodestrucción en el fondo -->
     
     <div class="container">
         <div class="classified">
