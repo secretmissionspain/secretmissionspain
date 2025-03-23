@@ -1,1 +1,166 @@
-prueba secretmissionspain
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Confidencial</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/api/placeholder/1200/800');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 80%;
+            max-width: 800px;
+        }
+        
+        .classified {
+            border: 2px solid #0f0;
+            padding: 20px;
+            box-shadow: 0 0 20px #0f0;
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .mission-code {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #ff0;
+        }
+        
+        .countdown {
+            font-size: 48px;
+            margin: 40px 0;
+            font-weight: bold;
+            text-shadow: 0 0 10px #0f0;
+        }
+        
+        .status {
+            font-size: 16px;
+            color: #fff;
+            margin-top: 30px;
+        }
+        
+        .scanning {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, transparent, #0f0, transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        .access-code {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ff0;
+        }
+        
+        .warning {
+            color: #f00;
+            margin-top: 40px;
+            font-size: 14px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px #0f0; }
+            50% { box-shadow: 0 0 20px #0f0; }
+            100% { box-shadow: 0 0 10px #0f0; }
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanning"></div>
+    
+    <div class="container">
+        <div class="classified">
+            <div class="mission-code">TOP SECRET // NIVEL 5 // OJOS ÚNICOS</div>
+            
+            <h1>Buenos días Agente M.Paz, a partir de ahora agente 8317</h1>
+            
+            <div class="status">ESTADO: CUENTA REGRESIVA PARA LA MISIÓN ACTIVA</div>
+            
+            <div class="countdown" id="countdown">CARGANDO...</div>
+            
+            <div class="access-code">CÓDIGO DE ACCESO: ALFA-TANGO-83172-ZULU</div>
+            
+            <div class="warning">ESTE MENSAJE SE AUTODESTRUIRÁ EN 60 SEGUNDOS</div>
+        </div>
+    </div>
+    
+    <script>
+        // Función para calcular el tiempo restante
+        function updateCountdown() {
+            const targetDate = new Date('June 7, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const timeRemaining = targetDate - now;
+            
+            if (timeRemaining > 0) {
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown').innerHTML = 
+                    `${days}D : ${hours}H : ${minutes}M : ${seconds}S`;
+            } else {
+                document.getElementById('countdown').innerHTML = "MISIÓN INICIADA";
+            }
+        }
+        
+        // Actualizar el contador cada segundo
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        
+        // Simular efecto de terminal
+        const title = document.querySelector('h1');
+        const originalText = title.innerHTML;
+        title.innerHTML = "";
+        
+        let i = 0;
+        const typeWriter = () => {
+            if (i < originalText.length) {
+                title.innerHTML += originalText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        };
+        
+        // Iniciar la animación de escritura después de un breve retraso
+        setTimeout(typeWriter, 1000);
+    </script>
+</body>
+</html>
