@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Confidencial</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/api/placeholder/1200/800');
+            background-size: cover;
+            background-position: center;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .classified {
+            border: 2px solid #0f0;
+            padding: 20px;
+            box-shadow: 0 0 20px #0f0;
+            animation: pulse 2s infinite;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: clamp(18px, 4vw, 28px);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.3;
+        }
+        
+        .mission-code {
+            font-size: clamp(14px, 3vw, 20px);
+            margin-bottom: 15px;
+            color: #ff0;
+        }
+        
+        .countdown {
+            font-size: clamp(36px, 9vw, 60px); /* Aumentado el tamaño de los caracteres */
+            margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 0 0 10px #0f0;
+            word-spacing: 0.5em;
+        }
+        
+        .status {
+            font-size: clamp(12px, 2.5vw, 16px);
+            color: #fff;
+            margin-top: 15px;
+        }
+        
+        .scanning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, transparent, #0f0, transparent);
+            animation: scan 3s linear infinite;
+            z-index: 100;
+        }
+        
+        .access-code {
+            margin-top: 15px;
+            font-size: clamp(12px, 2.5vw, 18px);
+            color: #ff0;
+        }
+        
+        .warning {
+            color: #f00;
+            margin-top: 15px;
+            font-size: clamp(10px, 2vw, 14px);
+            animation: blink 1s infinite;
+            display: none;
+        }
+        
+        .message-box {
+            background-color: #000;
+            border: 1px solid #0f0;
+            padding: 15px;
+            text-align: left;
+            font-size: clamp(14px, 2.5vw, 18px);
+            line-height: 1.5;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 0 15px #0f0;
+            height: clamp(150px, 30vh, 200px);
+            overflow: auto;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: #0f0;
+            animation: blink 0.8s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+
+        .countdown-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(50px, 15vw, 150px); /* Muy grande para toda la pantalla */
+            color: rgba(0, 255, 0, 0.1); /* Color translúcido */
+            z-index: 1;
+            pointer-events: none;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px #0f0; }
+            50% { box-shadow: 0 0 20px #0f0; }
+            100% { box-shadow: 0 0 10px #0f0; }
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+        
+        /* Media queries adicionales para ajustes específicos */
+        @media (max-width: 480px) {
+            .classified {
+                padding: 10px;
+            }
+            
+            .countdown {
+                letter-spacing: -1px;
+                word-spacing: 0.2em;
+            }
+            
+            .message-box {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanning"></div>
+    <div class="countdown-overlay" id="countdown-overlay">CARGANDO...</div> <!-- Cuenta regresiva en el fondo -->
+    
+    <div class="container">
+        <div class="classified">
+            <div class="mission-code">TOP SECRET // NIVEL 5 // OJOS ÚNICOS</div>
+            
+            <h1>Buenos días Agente M.Paz, a partir de ahora agente 8317</h1>
+            
+            <div class="status">ESTADO: CUENTA REGRESIVA PARA LA MISIÓN ACTIVA</div>
+            
+            <div class="countdown" id="countdown">CARGANDO...</div>
+            
+            <div class="access-code">CÓDIGO DE ACCESO: ALFA-TANGO-83172-ZULU</div>
+        </div>
+        
+        <div class="message-box" id="message-box">
+            <span id="typed-text"></span><span class="cursor"></span>
+            <div class="warning" id="self-destruct">ESTE MENSAJE SE AUTODESTRUIRÁ EN 60 SEGUNDOS</div>
+        </div>
+    </div>
+    
+    <script>
+        // Función para calcular el tiempo restante
+        function updateCountdown() {
+            const targetDate = new Date('June 7, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const timeRemaining = targetDate - now;
+            
+            if (timeRemaining > 0) {
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                
+                const countdownText = `${days}D : ${hours}H : ${minutes}M : ${seconds}S`;
+                document.getElementById('countdown').innerHTML = countdownText;
+                document.getElementById('countdown-overlay').innerHTML = countdownText;
+            } else {
+                // Iniciar efecto de autodestrucción al finalizar la cuenta regresiva
+                document.getElementById('countdown').innerHTML = "MISIÓN INICIADA";
+                document.getElementById('countdown-overlay').innerHTML = "MISIÓN INICIADA";
+                startSelfDestruction();
+            }
+        }
+        
+        // Actualizar el contador cada segundo
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Función para iniciar el efecto de autodestrucción
+        function startSelfDestruction() {
+            const elementsToFade = document.querySelectorAll('.container, .scanning, .countdown-overlay');
+            elementsToFade.forEach(element => {
+                element.style.animation = 'fadeout 3s forwards';
+            });
+
+            setTimeout(() => {
+                document.body.style.backgroundColor = "#fff";
+                setTimeout(() => {
+                    document.body.style.backgroundColor = "#000";
+                }, 200);
+            }, 3000);
+        }
+        
+        // Simular efecto de terminal para el título
+        const title = document.querySelector('h1');
+        const originalText = title.innerHTML;
+        title.innerHTML = "";
+        
+        let i = 0;
+        const typeWriterTitle = () => {
+            if (i < originalText.length) {
+                title.innerHTML += originalText.charAt(i);
+                i++;
+                setTimeout(typeWriterTitle, 50);
+            } else {
+                // Comenzar a escribir el mensaje después de que se complete el título
+                setTimeout(typeWriterMessage, 1000);
+            }
+        };
+        
+        // Mensaje que va a ser mecanografiado
+        const message = "Enhorabuena agente 8317, ya forma parte del equipo. Queremos que sea consciente que de la mision que tiene encomendada es de vital importancia para el futuro de la humanidad. En proximos dias recibira mas informacion al respecto...Ahora descanse y este preparada para una dura tarea.";
+        let messageIndex = 0;
+        
+        // Función para escribir el mensaje letra por letra
+        const typeWriterMessage = () => {
+            const typedTextElement = document.getElementById('typed-text');
+            
+            if (messageIndex < message.length) {
+                typedTextElement.innerHTML += message.charAt(messageIndex);
+                messageIndex++;
+                // Velocidad aleatoria para simular mecanografiado real
+                const randomSpeed = Math.floor(Math.random() * 50) + 30;
+                setTimeout(typeWriterMessage, randomSpeed);
+                
+                // Auto-scroll para mantener visible la última letra escrita
+                const messageBox = document.getElementById('message-box');
+                messageBox.scrollTop = messageBox.scrollHeight;
+            } else {
+                // Mostrar mensaje de autodestrucción cuando se complete el mensaje
+                document.getElementById('self-destruct').style.display = 'block';
+                
+                // Asegurar que el mensaje de autodestrucción es visible
+                const messageBox = document.getElementById('message-box');
+                messageBox.scrollTop = messageBox.scrollHeight;
+                
+                // Iniciar un temporizador para simular la cuenta regresiva de autodestrucción
+                let countdown = 60;
+                const selfDestruct = document.getElementById('self-destruct');
+                
+                const updateSelfDestruct = () => {
+                    countdown--;
+                    if (countdown > 0) {
+                        selfDestruct.innerHTML = `ESTE MENSAJE SE AUTODESTRUIRÁ EN ${countdown} SEGUNDOS`;
+                        setTimeout(updateSelfDestruct, 1000);
+                    } else {
+                        selfDestruct.innerHTML = "AUTODESTRUCCIÓN INICIADA";
+                        // Iniciar efecto de autodestrucción
+                        startSelfDestruction();
+                    }
+                };
+                
+                setTimeout(updateSelfDestruct, 1000);
+            }
+        };
+        
+        // Iniciar la animación de escritura del título
+        setTimeout(typeWriterTitle, 1000);
+        
+        // Detectar cambio de orientación en dispositivos móviles
+        window.addEventListener('resize', function() {
+            // Asegurar que el contenido se ajuste correctamente
+            updateLayout();
+        });
+        
+        function updateLayout() {
+            // Ajustar la altura del contenedor para dispositivos móviles
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        // Llamar a updateLayout inicialmente
+        updateLayout();
+    </script>
+</body>
+</html>
