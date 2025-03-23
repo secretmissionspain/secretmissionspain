@@ -122,7 +122,7 @@
             vertical-align: middle;
         }
 
-        .countdown-overlay {
+        .self-destruct-overlay {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -175,7 +175,7 @@
 </head>
 <body>
     <div class="scanning"></div>
-    <div class="countdown-overlay" id="countdown-overlay">CARGANDO...</div> <!-- Cuenta regresiva de autodestrucción en el fondo -->
+    <div class="self-destruct-overlay" id="self-destruct-overlay">CARGANDO...</div> <!-- Cuenta regresiva de autodestrucción en el fondo -->
     
     <div class="container">
         <div class="classified">
@@ -211,11 +211,9 @@
                 
                 const countdownText = `${days}D : ${hours}H : ${minutes}M : ${seconds}S`;
                 document.getElementById('countdown').innerHTML = countdownText;
-                document.getElementById('countdown-overlay').innerHTML = countdownText;
             } else {
                 // Iniciar efecto de autodestrucción al finalizar la cuenta regresiva
                 document.getElementById('countdown').innerHTML = "MISIÓN INICIADA";
-                document.getElementById('countdown-overlay').innerHTML = "MISIÓN INICIADA";
                 startSelfDestruction();
             }
         }
@@ -226,7 +224,7 @@
 
         // Función para iniciar el efecto de autodestrucción
         function startSelfDestruction() {
-            const elementsToFade = document.querySelectorAll('.container, .scanning, .countdown-overlay');
+            const elementsToFade = document.querySelectorAll('.container, .scanning');
             elementsToFade.forEach(element => {
                 element.style.animation = 'fadeout 3s forwards';
             });
@@ -237,6 +235,30 @@
                     document.body.style.backgroundColor = "#000";
                 }, 200);
             }, 3000);
+        }
+
+        // Función para iniciar la cuenta regresiva de autodestrucción
+        function startSelfDestructCountdown() {
+            let countdown = 60;
+            const selfDestruct = document.getElementById('self-destruct');
+            const selfDestructOverlay = document.getElementById('self-destruct-overlay');
+
+            const updateSelfDestruct = () => {
+                if (countdown > 0) {
+                    const countdownText = `ESTE MENSAJE SE AUTODESTRUIRÁ EN ${countdown} SEGUNDOS`;
+                    selfDestruct.innerHTML = countdownText;
+                    selfDestructOverlay.innerHTML = countdownText;
+                    countdown--;
+                    setTimeout(updateSelfDestruct, 1000);
+                } else {
+                    selfDestruct.innerHTML = "AUTODESTRUCCIÓN INICIADA";
+                    selfDestructOverlay.innerHTML = "AUTODESTRUCCIÓN INICIADA";
+                    // Iniciar efecto de autodestrucción
+                    startSelfDestruction();
+                }
+            };
+
+            updateSelfDestruct();
         }
         
         // Simular efecto de terminal para el título
@@ -257,68 +279,4 @@
         };
         
         // Mensaje que va a ser mecanografiado
-        const message = "Enhorabuena agente 8317, ya forma parte del equipo. Queremos que sea consciente que de la mision que tiene encomendada es de vital importancia para el futuro de la humanidad. En proximos dias recibira mas informacion al respecto...Ahora descanse y este preparada para una dura tarea.";
-        let messageIndex = 0;
-        
-        // Función para escribir el mensaje letra por letra
-        const typeWriterMessage = () => {
-            const typedTextElement = document.getElementById('typed-text');
-            
-            if (messageIndex < message.length) {
-                typedTextElement.innerHTML += message.charAt(messageIndex);
-                messageIndex++;
-                // Velocidad aleatoria para simular mecanografiado real
-                const randomSpeed = Math.floor(Math.random() * 50) + 30;
-                setTimeout(typeWriterMessage, randomSpeed);
-                
-                // Auto-scroll para mantener visible la última letra escrita
-                const messageBox = document.getElementById('message-box');
-                messageBox.scrollTop = messageBox.scrollHeight;
-            } else {
-                // Mostrar mensaje de autodestrucción cuando se complete el mensaje
-                document.getElementById('self-destruct').style.display = 'block';
-                
-                // Asegurar que el mensaje de autodestrucción es visible
-                const messageBox = document.getElementById('message-box');
-                messageBox.scrollTop = messageBox.scrollHeight;
-                
-                // Iniciar un temporizador para simular la cuenta regresiva de autodestrucción
-                let countdown = 60;
-                const selfDestruct = document.getElementById('self-destruct');
-                
-                const updateSelfDestruct = () => {
-                    countdown--;
-                    if (countdown > 0) {
-                        selfDestruct.innerHTML = `ESTE MENSAJE SE AUTODESTRUIRÁ EN ${countdown} SEGUNDOS`;
-                        setTimeout(updateSelfDestruct, 1000);
-                    } else {
-                        selfDestruct.innerHTML = "AUTODESTRUCCIÓN INICIADA";
-                        // Iniciar efecto de autodestrucción
-                        startSelfDestruction();
-                    }
-                };
-                
-                setTimeout(updateSelfDestruct, 1000);
-            }
-        };
-        
-        // Iniciar la animación de escritura del título
-        setTimeout(typeWriterTitle, 1000);
-        
-        // Detectar cambio de orientación en dispositivos móviles
-        window.addEventListener('resize', function() {
-            // Asegurar que el contenido se ajuste correctamente
-            updateLayout();
-        });
-        
-        function updateLayout() {
-            // Ajustar la altura del contenedor para dispositivos móviles
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-        
-        // Llamar a updateLayout inicialmente
-        updateLayout();
-    </script>
-</body>
-</html>
+        const message = "Enhorabuena agente 8317, ya forma parte del
