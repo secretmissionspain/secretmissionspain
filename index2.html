@@ -58,7 +58,7 @@
         }
         
         .countdown {
-            font-size: clamp(24px, 7vw, 48px);
+            font-size: clamp(36px, 9vw, 60px); /* Aumentado el tamaño de los caracteres */
             margin: 20px 0;
             font-weight: bold;
             text-shadow: 0 0 10px #0f0;
@@ -139,7 +139,7 @@
 
         @keyframes fadeout {
             0% { opacity: 1; }
-            100% { opacity: 0; }
+            100% { opacity: 0; transform: scale(0.5); }
         }
         
         /* Media queries adicionales para ajustes específicos */
@@ -276,13 +276,8 @@
                         setTimeout(updateSelfDestruct, 1000);
                     } else {
                         selfDestruct.innerHTML = "AUTODESTRUCCIÓN INICIADA";
-                        // Simular la autodestrucción (solo visual)
-                        setTimeout(() => {
-                            document.body.style.backgroundColor = "#fff";
-                            setTimeout(() => {
-                                document.body.style.backgroundColor = "#000";
-                            }, 200);
-                        }, 1000);
+                        // Iniciar efecto de autodestrucción
+                        startSelfDestruction();
                     }
                 };
                 
