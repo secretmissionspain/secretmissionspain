@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Detective - Adivina la Fecha</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: #f0e6d2;
+            font-family: 'Courier New', monospace;
+            padding: 1rem;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .typewriter-container {
+            background-color: #e6dcc6;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 1px solid #b8a276;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .typewriter-container::before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            height: 15px;
+            background-color: #d9ccb1;
+            border-radius: 5px;
+        }
+        
+        .typewriter-text {
+            min-height: 200px;
+            position: relative;
+            font-size: 1rem;
+            padding-top: 15px;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: #333;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .clues {
+            margin-top: 1.5rem;
+            display: none;
+            text-align: center;
+        }
+        
+        .clue-link {
+            display: inline-block;
+            background-color: #b8a276;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 25px;
+            margin: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .clue-link:hover, .clue-link:active {
+            background-color: #9a865e;
+            transform: translateY(-3px);
+        }
+        
+        .date-form {
+            margin-top: 2rem;
+            display: none;
+            text-align: center;
+        }
+        
+        .date-input-group {
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .date-input {
+            background-color: #fff;
+            border: 2px solid #b8a276;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            text-align: center;
+            width: 80px;
+        }
+        
+        .date-label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #614e2a;
+        }
+        
+        .submit-btn {
+            background-color: #614e2a;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .submit-btn:hover, .submit-btn:active {
+            background-color: #4a3b1f;
+            transform: translateY(-3px);
+        }
+        
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+            font-weight: bold;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+        
+        .vintage-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 100;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #614e2a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Media queries para diferentes tamaños de pantalla */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .typewriter-container {
+                padding: 1rem;
+            }
+            
+            .typewriter-text {
+                min-height: 180px;
+                font-size: 0.95rem;
+            }
+            
+            .clue-link {
+                padding: 10px 20px;
+                font-size: 1rem;
+                margin: 5px;
+                width: 130px;
+            }
+            
+            .date-input-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .date-input {
+                width: 120px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            .typewriter-text {
+                min-height: 160px;
+                font-size: 0.9rem;
+            }
+            
+            .clue-link {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                width: 120px;
+            }
+        }
+        
+        @media (min-width: 601px) {
+            .typewriter-container {
+                padding: 2rem;
+            }
+            
+            .typewriter-text {
+                font-size: 1.1rem;
+            }
+            
+            .date-input-group {
+                display: flex;
+                justify-content: center;
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="vintage-overlay"></div>
+    <div class="container">
+        <h1>El caso de la fecha misteriosa</h1>
+        <div class="typewriter-container">
+            <div class="typewriter-text" id="text"></div>
+            <div class="clues" id="clues">
+                <a href="pista1.html" class="clue-link">Pista Uno</a>
+                <a href="pista2.html" class="clue-link">Pista Dos</a>
+            </div>
+            <div class="date-form" id="date-form">
+                <div class="date-input-group">
+                    <div>
+                        <label class="date-label" for="day">Día</label>
+                        <input type="number" id="day" class="date-input" min="1" max="31" placeholder="Día">
+                    </div>
+                    <div>
+                        <label class="date-label" for="month">Mes</label>
+                        <input type="number" id="month" class="date-input" min="1" max="12" placeholder="Mes">
+                    </div>
+                    <div>
+                        <label class="date-label" for="year">Año</label>
+                        <input type="number" id="year" class="date-input" min="2000" max="2099" placeholder="Año">
+                    </div>
+                </div>
+                <button type="button" id="submit-btn" class="submit-btn">Verificar</button>
+                <div id="message" class="message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const text = "Hola agente, puedes adivinar la fecha, solo tienes que jugar con nosotros. En los enlaces encontraras las pistas que te pondrán en camino del exito.";
+            const textElement = document.getElementById('text');
+            const cluesElement = document.getElementById('clues');
+            const dateFormElement = document.getElementById('date-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const messageElement = document.getElementById('message');
+            
+            let index = 0;
+            
+            // Agregar cursor al inicio
+            textElement.innerHTML = '<span class="cursor"></span>';
+            
+            function typeWriter() {
+                if (index < text.length) {
+                    if (text.charAt(index) === '\n') {
+                        textElement.innerHTML = textElement.innerHTML.replace('<span class="cursor"></span>', '<br><span class="cursor"></span>');
+                    } else {
+                        textElement.innerHTML = textElement.innerHTML.replace('<span class="cursor"></span>', text.charAt(index) + '<span class="cursor"></span>');
+                    }
+                    
+                    index++;
+                    
+                    // Velocidad aleatoria entre 30ms y 100ms para simular escritura real
+                    const randomSpeed = Math.floor(Math.random() * 70) + 30;
+                    setTimeout(typeWriter, randomSpeed);
+                } else {
+                    // Mostrar opciones cuando termine de escribir
+                    cluesElement.style.display = 'block';
+                    dateFormElement.style.display = 'block';
+                }
+            }
+            
+            // Iniciar efecto máquina de escribir
+            setTimeout(typeWriter, 1000);
+            
+            // Configurar verificación de fecha
+            submitBtn.addEventListener('click', function() {
+                const day = parseInt(document.getElementById('day').value);
+                const month = parseInt(document.getElementById('month').value);
+                const year = parseInt(document.getElementById('year').value);
+                
+                // Verificar que todos los campos estén completos
+                if (isNaN(day) || isNaN(month) || isNaN(year)) {
+                    showMessage('Por favor, completa todos los campos de la fecha.', true);
+                    return;
+                }
+                
+                // Verificar si la fecha es correcta (21 de junio de 2025)
+                if (day === 21 && month === 6 && year === 2025) {
+                    // Redireccionar a la página de éxito
+                    window.location.href = 'exito.html';
+                } else {
+                    // Mostrar mensaje de error
+                    showMessage('Fecha incorrecta. Inténtalo de nuevo.', true);
+                }
+            });
+            
+            function showMessage(text, isError) {
+                messageElement.textContent = text;
+                messageElement.style.display = 'block';
+                
+                if (isError) {
+                    messageElement.className = 'message error';
+                } else {
+                    messageElement.className = 'message';
+                }
+                
+                // Ocultar mensaje después de 3 segundos
+                setTimeout(function() {
+                    messageElement.style.display = 'none';
+                }, 3000);
+            }
+            
+            // Ajustar altura según contenido
+            function adjustHeight() {
+                const textHeight = textElement.scrollHeight;
+                if (textHeight > 200) {
+                    textElement.style.minHeight = textHeight + 'px';
+                }
+            }
+            
+            // Verificar altura periódicamente mientras se escribe
+            setInterval(adjustHeight, 500);
+        });
+    </script>
+</body>
+</html>

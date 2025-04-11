@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Detective</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: #f0e6d2;
+            font-family: 'Courier New', monospace;
+            padding: 1rem;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .typewriter-container {
+            background-color: #e6dcc6;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 1px solid #b8a276;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .typewriter-container::before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            height: 15px;
+            background-color: #d9ccb1;
+            border-radius: 5px;
+        }
+        
+        .typewriter-text {
+            min-height: 300px;
+            position: relative;
+            font-size: 1rem;
+            padding-top: 15px;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: #333;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .choices {
+            margin-top: 1.5rem;
+            display: none;
+            text-align: center;
+        }
+        
+        .button {
+            background-color: #b8a276;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            margin: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            width: 100px;
+        }
+        
+        .button:hover, .button:active {
+            background-color: #9a865e;
+            transform: translateY(-3px);
+        }
+        
+        .vintage-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 100;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #614e2a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Media queries para diferentes tamaños de pantalla */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .typewriter-container {
+                padding: 1rem;
+            }
+            
+            .typewriter-text {
+                min-height: 250px;
+                font-size: 0.95rem;
+            }
+            
+            .button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            .typewriter-text {
+                min-height: 200px;
+                font-size: 0.9rem;
+            }
+            
+            .button {
+                padding: 8px 16px;
+                margin: 5px;
+            }
+        }
+        
+        @media (min-width: 601px) {
+            .typewriter-container {
+                padding: 2rem;
+            }
+            
+            .typewriter-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="vintage-overlay"></div>
+    <div class="container">
+        <h1>El caso de la detective</h1>
+        <div class="typewriter-container">
+            <div class="typewriter-text" id="text"></div>
+            <div class="choices" id="choices">
+                <button class="button" id="si-btn">SI</button>
+                <button class="button" id="no-btn">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const text = "Hola agente, para ser una buena detective tiene que mostrar interés, ¿quiere jugar sí o no? \n\nSolo de ti depende encontrar la \"Morada Dorada\"\n\nEn primavera, los rayos del sol inundan los campos y se tiñen de oro.\n\nExiste una morada donde confluirán los rayos del sol convirtiéndola en la \"Morada Dorada\" \n\n¿Quieres averiguar donde está la morada dorada?\n\nSi la encuentras, ese día lo recordarás siempre.\n\nNo sospeches de las personas cercanas a ti, podrán ayudarte a descifrar el enigma\n\n¿Quieres jugar SI/NO ?";
+            const textElement = document.getElementById('text');
+            const choicesElement = document.getElementById('choices');
+            const siBtn = document.getElementById('si-btn');
+            const noBtn = document.getElementById('no-btn');
+            
+            let index = 0;
+            
+            // Agregar cursor al inicio
+            textElement.innerHTML = '<span class="cursor"></span>';
+            
+            function typeWriter() {
+                if (index < text.length) {
+                    if (text.charAt(index) === '\n') {
+                        textElement.innerHTML = textElement.innerHTML.replace('<span class="cursor"></span>', '<br><span class="cursor"></span>');
+                    } else {
+                        textElement.innerHTML = textElement.innerHTML.replace('<span class="cursor"></span>', text.charAt(index) + '<span class="cursor"></span>');
+                    }
+                    
+                    index++;
+                    
+                    // Velocidad aleatoria entre 30ms y 100ms para simular escritura real
+                    const randomSpeed = Math.floor(Math.random() * 70) + 30;
+                    setTimeout(typeWriter, randomSpeed);
+                } else {
+                    // Mostrar opciones cuando termine de escribir
+                    choicesElement.style.display = 'block';
+                }
+            }
+            
+            // Iniciar efecto máquina de escribir
+            setTimeout(typeWriter, 1000);
+            
+            // Configurar botones
+            siBtn.addEventListener('click', function() {
+                window.location.href = 'pagina-si.html'; // Reemplazar con tu URL
+            });
+            
+            noBtn.addEventListener('click', function() {
+                window.location.href = 'pagina-no.html'; // Reemplazar con tu URL
+            });
+            
+            // Ajustar altura según contenido
+            function adjustHeight() {
+                const textHeight = textElement.scrollHeight;
+                if (textHeight > 300) {
+                    textElement.style.minHeight = textHeight + 'px';
+                }
+            }
+            
+            // Verificar altura periódicamente mientras se escribe
+            setInterval(adjustHeight, 500);
+        });
+    </script>
+</body>
+</html>
