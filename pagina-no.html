@@ -1,1 +1,201 @@
-NOOOO
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Máquina de Escribir</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #f0e6d2;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .paper {
+      background-color: #fffdf5;
+      border: 1px solid #e0d8c0;
+      padding: 2rem;
+      min-height: 200px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+      font-size: 1.2rem;
+      line-height: 1.5;
+      position: relative;
+    }
+    
+    .typewriter-text {
+      display: inline-block;
+      overflow: hidden;
+      white-space: normal;
+      margin: 0;
+      letter-spacing: 0.1em;
+      position: relative;
+    }
+    
+    .cursor {
+      display: inline-block;
+      width: 0.5rem;
+      height: 1.2rem;
+      background-color: #333;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    
+    @keyframes blink {
+      from, to { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    .btn {
+      margin-top: 2rem;
+      padding: 0.8rem 1.5rem;
+      background-color: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: #a93226;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
+        padding: 1rem;
+      }
+      
+      .paper {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+      
+      .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    /* Efecto de máquina de escribir antigua */
+    .paper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 20px,
+        rgba(0, 0, 0, 0.03) 20px,
+        rgba(0, 0, 0, 0.03) 21px
+      );
+      pointer-events: none;
+    }
+    
+    /* Efecto vintage */
+    .vintage-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(200, 180, 140, 0.2) 100%);
+      pointer-events: none;
+    }
+    
+    /* Sonido retro de teclas */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="paper">
+      <p class="typewriter-text" id="text"></p>
+      <span class="cursor"></span>
+      <div class="vintage-overlay"></div>
+    </div>
+    <button class="btn" id="goBackBtn" style="display: none;">VUELVE ATRÁS Y DI QUE SI</button>
+  </div>
+  
+  <audio id="typeSound" src="data:audio/mp3;base64,SUQzAwAAAAAAJlRQRTEAAAAcAAAAU291bmRKYXkuY29tIFNvdW5kIEVmZmVjdHMA//uSwAAAAAABLBQAAAL6QWwrFEACuAmSfBAAE4TpJgiIQhPQTJP4QhP/B+CBPwfggT/EdYP/rfMH//gg///8EIMeD4Pg+CBTiv//+CAPggAAAEsAAAAJMnqaWjyyLNnpqJ2mSZJ9bPL66gAAAAAE3VuYxyUxy5KKZ3MkHQsiIz6/HWPQN6xORkgqDkYrI2kMpClKUAAAA3LCz7RdClKc2hSlVUUtbRmDYrIb5YYtJnMGxX//FFH/4tsAAAAXbl7mORanKUpSlKJsVmMcjFZlJjHIxWRtKUpSAAP/7ksADgAqAey75wQABjg8lrxZgAL85iYHBwcHBwcHB8U5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOVsABLr/e9SlKUpSlKUpSsWoAA"></audio>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const text = "EN SERIO?????!!!!. Anda vuelve atras y di que SI... porfa porfa porfa :)";
+      const typingSpeed = 100; // Velocidad de escritura (ms)
+      const textElement = document.getElementById('text');
+      const goBackBtn = document.getElementById('goBackBtn');
+      const typeSound = document.getElementById('typeSound');
+      
+      let charIndex = 0;
+      
+      function typeWriter() {
+        if (charIndex < text.length) {
+          textElement.innerHTML += text.charAt(charIndex);
+          
+          // Reproducir sonido de tecla (excepto para espacios)
+          if (text.charAt(charIndex) !== ' ') {
+            // Crear una nueva instancia del audio para poder reproducirlo rápidamente
+            const typeSoundClone = typeSound.cloneNode(true);
+            typeSoundClone.volume = 0.3;
+            typeSoundClone.play();
+          }
+          
+          charIndex++;
+          
+          // Variación aleatoria en la velocidad de escritura para un efecto más realista
+          const randomDelay = Math.floor(Math.random() * 100) + typingSpeed;
+          
+          setTimeout(typeWriter, randomDelay);
+        } else {
+          // Mostrar el botón cuando se termine de escribir
+          goBackBtn.style.display = 'block';
+        }
+      }
+      
+      // Iniciar efecto de escritura
+      setTimeout(typeWriter, 1000);
+      
+      // Funcionalidad del botón
+      goBackBtn.addEventListener('click', function() {
+        window.history.back();
+      });
+    });
+  </script>
+</body>
+</html>
