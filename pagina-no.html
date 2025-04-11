@@ -135,11 +135,6 @@
       background: radial-gradient(ellipse at center, transparent 60%, rgba(200, 180, 140, 0.2) 100%);
       pointer-events: none;
     }
-    
-    /* Sonido retro de teclas */
-    audio {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -149,37 +144,25 @@
       <span class="cursor"></span>
       <div class="vintage-overlay"></div>
     </div>
-    <button class="btn" id="goBackBtn" style="display: none;">VUELVE ATRÁS Y DI QUE SI</button>
+    <button class="btn" id="goBackBtn" style="display: none;">VOLVER ATRÁS PARA DECIR QUE SI</button>
   </div>
-  
-  <audio id="typeSound" src="data:audio/mp3;base64,SUQzAwAAAAAAJlRQRTEAAAAcAAAAU291bmRKYXkuY29tIFNvdW5kIEVmZmVjdHMA//uSwAAAAAABLBQAAAL6QWwrFEACuAmSfBAAE4TpJgiIQhPQTJP4QhP/B+CBPwfggT/EdYP/rfMH//gg///8EIMeD4Pg+CBTiv//+CAPggAAAEsAAAAJMnqaWjyyLNnpqJ2mSZJ9bPL66gAAAAAE3VuYxyUxy5KKZ3MkHQsiIz6/HWPQN6xORkgqDkYrI2kMpClKUAAAA3LCz7RdClKc2hSlVUUtbRmDYrIb5YYtJnMGxX//FFH/4tsAAAAXbl7mORanKUpSlKJsVmMcjFZlJjHIxWRtKUpSAAP/7ksADgAqAey75wQABjg8lrxZgAL85iYHBwcHBwcHB8U5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOU5znOVsABLr/e9SlKUpSlKUpSsWoAA"></audio>
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const text = "EN SERIO?????!!!!. Anda vuelve atras y di que SI... porfa porfa porfa :)";
-      const typingSpeed = 100; // Velocidad de escritura (ms)
+      const text = "EN SERIO????!!!!, anda vuelve atras y di que SI...   porfa porfa porfa :)";
+      const typingSpeed = 30; // Velocidad de escritura más rápida (ms)
       const textElement = document.getElementById('text');
       const goBackBtn = document.getElementById('goBackBtn');
-      const typeSound = document.getElementById('typeSound');
       
       let charIndex = 0;
       
       function typeWriter() {
         if (charIndex < text.length) {
           textElement.innerHTML += text.charAt(charIndex);
-          
-          // Reproducir sonido de tecla (excepto para espacios)
-          if (text.charAt(charIndex) !== ' ') {
-            // Crear una nueva instancia del audio para poder reproducirlo rápidamente
-            const typeSoundClone = typeSound.cloneNode(true);
-            typeSoundClone.volume = 0.3;
-            typeSoundClone.play();
-          }
-          
           charIndex++;
           
-          // Variación aleatoria en la velocidad de escritura para un efecto más realista
-          const randomDelay = Math.floor(Math.random() * 100) + typingSpeed;
+          // Variación menor en la velocidad de escritura
+          const randomDelay = Math.floor(Math.random() * 20) + typingSpeed;
           
           setTimeout(typeWriter, randomDelay);
         } else {
@@ -189,7 +172,7 @@
       }
       
       // Iniciar efecto de escritura
-      setTimeout(typeWriter, 1000);
+      setTimeout(typeWriter, 500);
       
       // Funcionalidad del botón
       goBackBtn.addEventListener('click', function() {
