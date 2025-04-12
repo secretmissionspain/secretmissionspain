@@ -35,7 +35,7 @@
     
     .container {
       width: 90%;
-      max-width: 600px;
+      max-width: 750px;
       background-color: #34495e;
       padding: 2rem;
       border-radius: 5px;
@@ -130,9 +130,15 @@
       border: 3px solid #7f8c8d;
       border-radius: 5px;
       overflow: hidden;
-      max-width: 100%;
+      width: 100%;
       position: relative;
       background-color: #f5f5f5;
+    }
+    
+    .image-container img {
+      width: 100%;
+      height: auto;
+      display: block;
     }
     
     .image-caption {
@@ -261,7 +267,7 @@
     
     <div class="image-container" id="everestImage">
       <img src="edmund-hillary-y-tenzing-norgay-everest-1953-750x440.jpg" alt="Monte Everest" />
-      <div class="image-caption">Monte Everest - La cima del mundo (8.848 metros)</div>
+      <div class="image-caption">Subida al Monte Everest - La cima del mundo (8.848 metros)</div>
     </div>
     
     <div class="buttons-container">
@@ -280,6 +286,7 @@
       const everestImage = document.getElementById('everestImage');
       
       let charIndex = 0;
+      let imageVisible = false;
       
       function typeWriter() {
         if (charIndex < text.length) {
@@ -310,10 +317,17 @@
         window.history.back();
       });
       
-      // Funcionalidad del botón de pista
+      // Funcionalidad del botón de pista - ahora alterna entre mostrar y ocultar
       hintBtn.addEventListener('click', function() {
-        everestImage.style.display = 'block';
-        hintBtn.style.display = 'none';
+        if (imageVisible) {
+          everestImage.style.display = 'none';
+          hintBtn.textContent = 'VER PISTA ADICIONAL';
+          imageVisible = false;
+        } else {
+          everestImage.style.display = 'block';
+          hintBtn.textContent = 'OCULTAR PISTA';
+          imageVisible = true;
+        }
       });
       
       // Rotación lenta de los engranajes decorativos
