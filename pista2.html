@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pista 2 - La Gran Aventura</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="100%" height="100%" fill="%232c3e50"/><path d="M30,170 L30,100 L50,100 L50,170 Z" fill="%23333"/><path d="M45,100 L45,80 L55,70 L65,80 L65,100 Z" fill="%23333"/><path d="M70,170 L70,90 L100,90 L100,170 Z" fill="%23333"/><path d="M90,90 L90,60 L110,60 L110,90 Z" fill="%23333"/><path d="M90,60 L100,40 L110,60 Z" fill="%23333"/><path d="M130,170 L130,120 L150,120 L150,170 Z" fill="%23333"/><path d="M140,120 L140,100 L160,100 L160,120 Z" fill="%23333"/><path d="M150,100 L150,80 L170,80 L170,100 Z" fill="%23333"/><path d="M155,80 L165,60 L175,80 Z" fill="%23333"/><circle cx="60" cy="40" r="10" fill="%23555" opacity="0.7"/><circle cx="150" cy="30" r="15" fill="%23555" opacity="0.7"/><circle cx="110" cy="20" r="12" fill="%23555" opacity="0.7"/></svg>');
+      background-repeat: repeat;
+      background-size: 400px;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
+      z-index: -1;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background-color: #34495e;
+      padding: 2rem;
+      border-radius: 5px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      margin: 20px;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #7f8c8d;
+    }
+    
+    .paper {
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #7f8c8d;
+      padding: 2rem;
+      min-height: 200px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+      font-size: 1.2rem;
+      line-height: 1.6;
+      position: relative;
+    }
+    
+    .typewriter-text {
+      display: inline-block;
+      overflow: hidden;
+      white-space: normal;
+      margin: 0;
+      letter-spacing: 0.05em;
+      position: relative;
+    }
+    
+    .cursor {
+      display: inline-block;
+      width: 0.5rem;
+      height: 1.2rem;
+      background-color: #333;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    
+    @keyframes blink {
+      from, to { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    .btn {
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      background-color: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+    
+    .btn:hover {
+      background-color: #a93226;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    
+    .hint-btn {
+      background-color: #2980b9;
+      margin-right: 1rem;
+    }
+    
+    .hint-btn:hover {
+      background-color: #2471a3;
+    }
+    
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    
+    .image-container {
+      margin-top: 1.5rem;
+      text-align: center;
+      display: none;
+      border: 3px solid #7f8c8d;
+      border-radius: 5px;
+      overflow: hidden;
+      max-width: 100%;
+      position: relative;
+      background-color: #f5f5f5;
+    }
+    
+    .image-caption {
+      padding: 0.8rem;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 0.9rem;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
+        padding: 1rem;
+      }
+      
+      .paper {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+      
+      .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .hint-btn {
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+    }
+    
+    /* Efectos para dar aspecto viejo e industrial */
+    .paper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 20px,
+        rgba(0, 0, 0, 0.03) 20px,
+        rgba(0, 0, 0, 0.03) 21px
+      );
+      pointer-events: none;
+    }
+    
+    .vintage-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(180, 170, 140, 0.2) 100%);
+      pointer-events: none;
+    }
+    
+    /* Elementos decorativos industriales */
+    .gear {
+      position: absolute;
+      background-color: #7f8c8d;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 5;
+    }
+    
+    .gear::before {
+      content: '';
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      background-color: #34495e;
+      border-radius: 50%;
+    }
+    
+    .gear-1 {
+      width: 60px;
+      height: 60px;
+      top: -30px;
+      right: -30px;
+    }
+    
+    .gear-2 {
+      width: 40px;
+      height: 40px;
+      bottom: -20px;
+      left: -20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ecf0f1;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="gear gear-1"></div>
+    <div class="gear gear-2"></div>
+    <div class="header">Pista 2</div>
+    <div class="paper">
+      <p class="typewriter-text" id="text"></p>
+      <span class="cursor"></span>
+      <div class="vintage-overlay"></div>
+    </div>
+    
+    <div class="image-container" id="everestImage">
+      <img src="edmund-hillary-y-tenzing-norgay-everest-1953-750x440.jpg" alt="Monte Everest" />
+      <div class="image-caption">Monte Everest - La cima del mundo (8.848 metros)</div>
+    </div>
+    
+    <div class="buttons-container">
+      <button class="btn hint-btn" id="hintBtn">VER PISTA ADICIONAL</button>
+      <button class="btn" id="goBackBtn" style="display: none;">VOLVER PARA INTRODUCIR EL MES</button>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const text = "En este mes, un 29, Tenzing Norgay y Edmund Hillary fueron los primeros seres humanos en completaron una aventura extraordinarioa por primera vez en la historia..\n\nAverigua el mes y tendrás la segunda pista.";
+      const typingSpeed = 30; // Velocidad de escritura (ms)
+      const textElement = document.getElementById('text');
+      const goBackBtn = document.getElementById('goBackBtn');
+      const hintBtn = document.getElementById('hintBtn');
+      const everestImage = document.getElementById('everestImage');
+      
+      let charIndex = 0;
+      
+      function typeWriter() {
+        if (charIndex < text.length) {
+          // Reemplazar saltos de línea con <br>
+          if (text.charAt(charIndex) === '\n') {
+            textElement.innerHTML += '<br>';
+          } else {
+            textElement.innerHTML += text.charAt(charIndex);
+          }
+          
+          charIndex++;
+          
+          // Variación en la velocidad de escritura
+          const randomDelay = Math.floor(Math.random() * 20) + typingSpeed;
+          
+          setTimeout(typeWriter, randomDelay);
+        } else {
+          // Mostrar el botón cuando se termine de escribir
+          goBackBtn.style.display = 'block';
+        }
+      }
+      
+      // Iniciar efecto de escritura
+      setTimeout(typeWriter, 500);
+      
+      // Funcionalidad del botón para volver
+      goBackBtn.addEventListener('click', function() {
+        window.history.back();
+      });
+      
+      // Funcionalidad del botón de pista
+      hintBtn.addEventListener('click', function() {
+        everestImage.style.display = 'block';
+        hintBtn.style.display = 'none';
+      });
+      
+      // Rotación lenta de los engranajes decorativos
+      const gears = document.querySelectorAll('.gear');
+      let rotation = 0;
+      
+      function rotateGears() {
+        rotation += 0.5;
+        gears[0].style.transform = `rotate(${rotation}deg)`;
+        gears[1].style.transform = `rotate(-${rotation}deg)`;
+        requestAnimationFrame(rotateGears);
+      }
+      
+      rotateGears();
+    });
+  </script>
+</body>
+</html>
