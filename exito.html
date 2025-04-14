@@ -123,6 +123,12 @@
       font-size: 1.3em;
     }
     
+    .fecha {
+      color: #dbb40c;
+      font-weight: bold;
+      font-size: 1.3em;
+    }
+    
     @media (max-width: 768px) {
       .container {
         width: 95%;
@@ -183,6 +189,14 @@
                    charIndex < text.indexOf('SIEMPRE') + 7) {
             if (charIndex === text.indexOf('SIEMPRE')) {
               textElement.innerHTML += '<span class="siempre">SIEMPRE</span>';
+              charIndex += 6;
+            }
+          }
+          // Destacar la fecha
+          else if (charIndex >= text.indexOf('31 de Mayo de 2025') && 
+                   charIndex < text.indexOf('31 de Mayo de 2025') + 7) {
+            if (charIndex === text.indexOf('31 de Mayo de 2025')) {
+              textElement.innerHTML += '<span class="fecha">31 de Mayo de 2025</span>';
               charIndex += 6;
             }
           }
