@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Confidencial - Detalles</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: "Courier New", monospace;
+            background-color: #121212;
+            color: #ffcc00;
+            overflow-x: hidden;
+        }
+        
+        .page {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #121212;
+            background-image: url('/api/placeholder/800/600');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            padding: 20px 0;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        
+        .content {
+            width: 90%;
+            max-width: 800px;
+            padding: clamp(20px, 5vw, 40px);
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+            margin: 40px 10px;
+        }
+        
+        h1 {
+            font-size: clamp(1.8rem, 7vw, 2.5rem);
+            margin-bottom: clamp(1rem, 5vw, 2rem);
+            text-shadow: 0 0 10px #ffcc00;
+            letter-spacing: 3px;
+        }
+        
+        .mission-text {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            line-height: 1.6;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        .location-details {
+            border: 2px solid #ffcc00;
+            padding: clamp(15px, 5vw, 20px);
+            margin: clamp(15px, 8vw, 30px) 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            text-align: left;
+        }
+        
+        .highlight {
+            color: #fff;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .footer {
+            width: 100%;
+            text-align: center;
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            color: #ffcc00;
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: clamp(0.7rem, 3vw, 1rem);
+            transform: rotate(15deg);
+            border: 2px solid #ff3300;
+            padding: clamp(5px, 2vw, 10px);
+            color: #ff3300;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+        }
+        
+        .final-message {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            color: #fff;
+            margin-top: clamp(20px, 7vw, 30px);
+            text-shadow: 0 0 10px #ffcc00;
+        }
+        
+        /* Decoración adicional para estética de espía */
+        .corner {
+            position: absolute;
+            width: clamp(15px, 5vw, 30px);
+            height: clamp(15px, 5vw, 30px);
+            border: 2px solid #ffcc00;
+        }
+        
+        .corner-tl {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .corner-tr {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .corner-bl {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .corner-br {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        /* Estilo para el efecto de máquina de escribir */
+        .typewriter-container {
+            min-height: 1.6em;
+            position: relative;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background-color: #ffcc00;
+            margin-left: 2px;
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Ajustes específicos para móviles */
+        @media (max-width: 480px) {
+            .content {
+                padding: 15px;
+                margin: 30px 10px;
+            }
+            
+            .stamp {
+                padding: 5px;
+                top: 10px;
+                right: 10px;
+            }
+            
+            .corner {
+                width: 15px;
+                height: 15px;
+            }
+            
+            h1 {
+                margin-top: 20px;
+            }
+        }
+        
+        /* Ajustes para dispositivos muy pequeños */
+        @media (max-height: 500px) {
+            .page {
+                padding-top: 40px;
+                padding-bottom: 40px;
+                justify-content: flex-start;
+            }
+            
+            .content {
+                margin-top: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="overlay"></div>
+        <div class="stamp">ALTO SECRETO</div>
+        <div class="content">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+            
+            <h1>MISIÓN CONFIDENCIAL</h1>
+            
+            <div id="mission-text-1" class="mission-text typewriter-container"></div>
+            <div id="mission-text-2" class="mission-text typewriter-container"></div>
+            
+            <div class="location-details">
+                <div id="location-title" class="mission-text typewriter-container"></div>
+                <div id="location-address" class="mission-text typewriter-container"></div>
+                
+                <div id="time-title" class="mission-text typewriter-container"></div>
+                <div id="time-details" class="mission-text typewriter-container"></div>
+            </div>
+            
+            <div id="final-message" class="final-message typewriter-container"></div>
+        </div>
+        <div class="footer">
+            DECODIFICADO POR AGENTE ESPECIAL // NO HACER COPIAS
+        </div>
+    </div>
+
+    <script>
+        // Texto que queremos mostrar en cada contenedor
+        const texts = {
+            'mission-text-1': 'Una misión demanda estar equipado para la misma. Hemos preparado para ti un vestido adecuado y un peinado adecuado.',
+            'mission-text-2': 'Tienes que acudir a la siguiente localización...',
+            'location-title': 'Lugar:',
+            'location-address': 'Calle de los Galeote 2\nVicalvaro\n28032, Madrid',
+            'time-title': 'Momento:',
+            'time-details': 'Próximo VIERNES día 30 a las 12:30 horas',
+            'final-message': 'Queda menos para descubrir La Morada Dorada'
+        };
+        
+        // Función para escribir texto con efecto de máquina de escribir
+        function typeWriter(elementId, text, i, fnCallback) {
+            // Verificamos si el elemento existe
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            // Si la iteración es menor que la longitud del texto
+            if (i < text.length) {
+                // Añadimos el siguiente carácter
+                element.innerHTML = text.substring(0, i+1).replace(/\n/g, '<br>') + '<span class="cursor"></span>';
+                
+                // Velocidad aleatoria para un efecto más realista
+                const speed = Math.floor(Math.random() * 70) + 30;
+                
+                // Esperamos antes de escribir el siguiente carácter
+                setTimeout(function() {
+                    typeWriter(elementId, text, i + 1, fnCallback);
+                }, speed);
+            }
+            // Si hemos terminado de escribir el texto
+            else if (typeof fnCallback == 'function') {
+                // Reemplazamos el cursor por nada
+                element.innerHTML = text.replace(/\n/g, '<br>');
+                // Llamamos al callback después de un retraso
+                setTimeout(fnCallback, 700);
+            }
+        }
+        
+        // Función para iniciar el efecto secuencialmente
+        function startSequence() {
+            const sequence = [
+                'mission-text-1',
+                'mission-text-2',
+                'location-title',
+                'location-address',
+                'time-title',
+                'time-details',
+                'final-message'
+            ];
+            
+            let currentIndex = 0;
+            
+            function typeNext() {
+                if (currentIndex < sequence.length) {
+                    const currentId = sequence[currentIndex];
+                    typeWriter(currentId, texts[currentId], 0, function() {
+                        currentIndex++;
+                        setTimeout(typeNext, 300); // Pequeño retraso entre secciones
+                    });
+                }
+            }
+            
+            // Iniciamos la secuencia
+            typeNext();
+        }
+        
+        // Iniciamos la secuencia cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(startSequence, 500); // Pequeño retraso inicial
+        });
+    </script>
+</body>
+</html> iniciar el efecto secuencialmente
+        function startSequence() {
+            const sequence = [
+                'mission-text-1',
+                'mission-text-2',
+                'location-title',
+                'location-address',
+                'time-title',
+                'time-details',
+                'final-message'
+            ];
+            
+            let currentIndex = 0;
+            
+            function typeNext() {
+                if (currentIndex < sequence.length) {
+                    const currentId = sequence[currentIndex];
+                    typeWriter(currentId, texts[currentId].replace(/\n/g, '<br>'), 0, function() {
+                        currentIndex++;
+                        setTimeout(typeNext, 300); // Pequeño retraso entre secciones
+                    });
+                }
+            }
+            
+            // Iniciamos la secuencia
+            typeNext();
+        }
+        
+        // Iniciamos la secuencia cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(startSequence, 500); // Pequeño retraso inicial
+        });
+    </script>
+</body>
+</html>
