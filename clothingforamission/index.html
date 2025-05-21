@@ -24,79 +24,75 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            background-color: #000;
-            transition: opacity 1s;
-        }
-        
-        #page1 {
-            z-index: 2;
             background-image: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
         }
         
-        #page2 {
-            z-index: 1;
-            opacity: 0;
-            background-image: url('/api/placeholder/800/600');
-            background-size: cover;
-            background-position: center;
-            background-blend-mode: overlay;
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-        
         .content {
+            width: 90%;
             max-width: 800px;
             padding: 20px;
             position: relative;
         }
         
         h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-bottom: clamp(1rem, 4vw, 2rem);
             text-shadow: 0 0 10px #ffcc00;
+            height: auto;
+            min-height: 4rem;
         }
         
         p {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
             margin-bottom: 1rem;
             line-height: 1.6;
+            height: auto;
+            min-height: 2.5rem;
         }
         
-        .typewriter {
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blinkCursor {
+            from, to { border-right-color: transparent; }
+            50% { border-right-color: #ffcc00; }
+        }
+        
+        .typewriter-text {
+            display: inline-block;
             overflow: hidden;
-            border-right: 0.15em solid #ffcc00;
             white-space: nowrap;
-            margin: 0;
-            letter-spacing: 0.15em;
-            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+            border-right: 0.15em solid #ffcc00;
+            width: 0;
+            animation: 
+                typewriter 2s steps(40, end) forwards,
+                blinkCursor 0.75s step-end infinite;
         }
         
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #ffcc00 }
+        .typewriter-text.delay {
+            animation-delay: 2.5s;
         }
         
         .btn {
             display: inline-block;
-            padding: 15px 30px;
-            margin-top: 30px;
+            padding: clamp(10px, 3vw, 15px) clamp(20px, 6vw, 30px);
+            margin-top: clamp(20px, 6vw, 30px);
             background-color: #ffcc00;
             color: #000;
             text-decoration: none;
             font-weight: bold;
             border-radius: 5px;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             cursor: pointer;
             transition: all 0.3s;
             opacity: 0;
-            animation: fadeIn 1s 4s forwards;
+            animation: fadeIn 1s 4.5s forwards;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .btn:hover {
+        .btn:hover, .btn:active {
             background-color: #fff;
             transform: scale(1.05);
         }
@@ -107,15 +103,23 @@
         }
         
         .logo {
-            width: 120px;
-            height: 120px;
+            width: clamp(100px, 30vw, 150px);
+            height: clamp(100px, 30vw, 150px);
             border: 3px solid #ffcc00;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: clamp(20px, 6vw, 30px);
             animation: pulse 2s infinite;
+            padding: 10px;
+        }
+        
+        .logo-text {
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            text-align: center;
+            font-weight: bold;
+            line-height: 1.2;
         }
         
         @keyframes pulse {
@@ -124,132 +128,51 @@
             100% { box-shadow: 0 0 0 0 rgba(255,204,0, 0); }
         }
         
-        .location-details {
-            border: 1px solid #ffcc00;
-            padding: 20px;
-            margin: 20px 0;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-        
-        .highlight {
-            color: #fff;
-            font-weight: bold;
-        }
-        
         .footer {
             position: absolute;
             bottom: 20px;
             width: 100%;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2vw, 0.8rem);
             color: #ffcc00;
         }
         
-        .stamp {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 0.8rem;
-            transform: rotate(15deg);
-            border: 1px solid #ffcc00;
-            padding: 5px;
-            color: #ffcc00;
-        }
-        
-        /* Efecto de máquina de escribir para la segunda página */
-        .typed-text {
-            display: inline-block;
-            overflow: hidden;
-            white-space: pre-wrap;
-            opacity: 0;
-            width: 0;
+        /* Asegurarse de que la altura mínima sea adecuada en dispositivos pequeños */
+        @media (max-height: 500px) {
+            .logo {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 10px;
+            }
+            
+            h1 {
+                margin-bottom: 0.5rem;
+                min-height: 2.5rem;
+            }
+            
+            p {
+                margin-bottom: 0.5rem;
+                min-height: 1.5rem;
+            }
+            
+            .btn {
+                margin-top: 15px;
+                padding: 8px 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="page1" class="page">
+    <div class="page">
         <div class="content">
             <div class="logo">
-                <span style="font-size: 2rem;">123</span>
+                <span class="logo-text">Morada<br>Dorada</span>
             </div>
-            <h1 class="typewriter">Agente...</h1>
-            <p class="typewriter" style="animation-delay: 2s;">Se acerca el gran día</p>
-            <button id="continueBtn" class="btn">Si estás interesada presiona el botón</button>
+            <h1><span class="typewriter-text">Agente...</span></h1>
+            <p><span class="typewriter-text delay">Se acerca el gran día</span></p>
+            <a href="page2.html" class="btn">Si estás interesada presiona el botón</a>
         </div>
         <div class="footer">TOP SECRET // CLASIFICADO</div>
     </div>
-    
-    <div id="page2" class="page">
-        <div class="stamp">ALTO SECRETO</div>
-        <div class="content">
-            <h1>MISIÓN CONFIDENCIAL</h1>
-            <div id="mission-text">
-                <p class="typed-text">Una misión demanda estar equipado para la misma. Hemos preparado para ti un vestido adecuado y un peinado adecuado.</p>
-                <p class="typed-text">Tienes que acudir a la siguiente localización...</p>
-                
-                <div class="location-details">
-                    <p class="typed-text"><span class="highlight">Lugar:</span><br>
-                    Calle de los Galeote 2<br>
-                    Vicalvaro<br>
-                    28032, Madrid</p>
-                    
-                    <p class="typed-text"><span class="highlight">Momento:</span><br>
-                    Próximo VIERNES día 30 a las 12:30 horas</p>
-                </div>
-                
-                <p class="typed-text" style="font-size: 1.8rem; color: #fff;">Queda menos para descubrir La Morada Dorada</p>
-            </div>
-        </div>
-        <div class="footer">
-            DECODIFICADO POR AGENTE ESPECIAL // NO HACER COPIAS
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('continueBtn').addEventListener('click', function() {
-            document.getElementById('page1').style.opacity = '0';
-            document.getElementById('page2').style.opacity = '1';
-            
-            setTimeout(function() {
-                document.getElementById('page1').style.display = 'none';
-                startTypewriterEffect();
-            }, 1000);
-        });
-        
-        function startTypewriterEffect() {
-            const elements = document.querySelectorAll('.typed-text');
-            let delay = 0;
-            
-            elements.forEach((element, index) => {
-                setTimeout(() => {
-                    typeText(element, 0);
-                }, delay);
-                
-                // Aumentamos el retraso para el siguiente elemento
-                // Calculamos basado en la longitud del texto actual
-                delay += element.textContent.length * 50 + 500;
-            });
-        }
-        
-        function typeText(element, charIndex) {
-            const text = element.textContent;
-            const totalChars = text.length;
-            
-            // Primer caracter, inicializamos el elemento
-            if (charIndex === 0) {
-                element.textContent = '';
-                element.style.opacity = '1';
-            }
-            
-            if (charIndex < totalChars) {
-                element.textContent += text.charAt(charIndex);
-                element.style.width = ((charIndex + 1) / totalChars * 100) + '%';
-                
-                // Velocidad aleatoria para efecto más realista de máquina de escribir
-                const randomSpeed = Math.floor(Math.random() * 50) + 30;
-                setTimeout(() => typeText(element, charIndex + 1), randomSpeed);
-            }
-        }
-    </script>
 </body>
 </html>
