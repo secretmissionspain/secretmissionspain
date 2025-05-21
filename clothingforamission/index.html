@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Confidencial</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: "Courier New", monospace;
+            background-color: #000;
+            color: #ffcc00;
+            overflow: hidden;
+        }
+        
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #000;
+            transition: opacity 1s;
+        }
+        
+        #page1 {
+            z-index: 2;
+            background-image: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+        }
+        
+        #page2 {
+            z-index: 1;
+            opacity: 0;
+            background-image: url('/api/placeholder/800/600');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .content {
+            max-width: 800px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #ffcc00;
+        }
+        
+        p {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 0.15em solid #ffcc00;
+            white-space: nowrap;
+            margin: 0;
+            letter-spacing: 0.15em;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ffcc00 }
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin-top: 30px;
+            background-color: #ffcc00;
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: fadeIn 1s 4s forwards;
+        }
+        
+        .btn:hover {
+            background-color: #fff;
+            transform: scale(1.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #ffcc00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,204,0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255,204,0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,204,0, 0); }
+        }
+        
+        .location-details {
+            border: 1px solid #ffcc00;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .highlight {
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ffcc00;
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            transform: rotate(15deg);
+            border: 1px solid #ffcc00;
+            padding: 5px;
+            color: #ffcc00;
+        }
+        
+        /* Efecto de máquina de escribir para la segunda página */
+        .typed-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: pre-wrap;
+            opacity: 0;
+            width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="page1" class="page">
+        <div class="content">
+            <div class="logo">
+                <span style="font-size: 2rem;">123</span>
+            </div>
+            <h1 class="typewriter">Agente...</h1>
+            <p class="typewriter" style="animation-delay: 2s;">Se acerca el gran día</p>
+            <button id="continueBtn" class="btn">Si estás interesada presiona el botón</button>
+        </div>
+        <div class="footer">TOP SECRET // CLASIFICADO</div>
+    </div>
+    
+    <div id="page2" class="page">
+        <div class="stamp">ALTO SECRETO</div>
+        <div class="content">
+            <h1>MISIÓN CONFIDENCIAL</h1>
+            <div id="mission-text">
+                <p class="typed-text">Una misión demanda estar equipado para la misma. Hemos preparado para ti un vestido adecuado y un peinado adecuado.</p>
+                <p class="typed-text">Tienes que acudir a la siguiente localización...</p>
+                
+                <div class="location-details">
+                    <p class="typed-text"><span class="highlight">Lugar:</span><br>
+                    Calle de los Galeote 2<br>
+                    Vicalvaro<br>
+                    28032, Madrid</p>
+                    
+                    <p class="typed-text"><span class="highlight">Momento:</span><br>
+                    Próximo VIERNES día 30 a las 12:30 horas</p>
+                </div>
+                
+                <p class="typed-text" style="font-size: 1.8rem; color: #fff;">Queda menos para descubrir La Morada Dorada</p>
+            </div>
+        </div>
+        <div class="footer">
+            DECODIFICADO POR AGENTE ESPECIAL // NO HACER COPIAS
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('continueBtn').addEventListener('click', function() {
+            document.getElementById('page1').style.opacity = '0';
+            document.getElementById('page2').style.opacity = '1';
+            
+            setTimeout(function() {
+                document.getElementById('page1').style.display = 'none';
+                startTypewriterEffect();
+            }, 1000);
+        });
+        
+        function startTypewriterEffect() {
+            const elements = document.querySelectorAll('.typed-text');
+            let delay = 0;
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    typeText(element, 0);
+                }, delay);
+                
+                // Aumentamos el retraso para el siguiente elemento
+                // Calculamos basado en la longitud del texto actual
+                delay += element.textContent.length * 50 + 500;
+            });
+        }
+        
+        function typeText(element, charIndex) {
+            const text = element.textContent;
+            const totalChars = text.length;
+            
+            // Primer caracter, inicializamos el elemento
+            if (charIndex === 0) {
+                element.textContent = '';
+                element.style.opacity = '1';
+            }
+            
+            if (charIndex < totalChars) {
+                element.textContent += text.charAt(charIndex);
+                element.style.width = ((charIndex + 1) / totalChars * 100) + '%';
+                
+                // Velocidad aleatoria para efecto más realista de máquina de escribir
+                const randomSpeed = Math.floor(Math.random() * 50) + 30;
+                setTimeout(() => typeText(element, charIndex + 1), randomSpeed);
+            }
+        }
+    </script>
+</body>
+</html>
