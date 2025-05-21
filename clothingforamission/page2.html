@@ -250,41 +250,7 @@
             'final-message': 'Queda menos para descubrir La Morada Dorada'
         };
         
-        // Función para iniciar el efecto secuencialmente
-        function startSequence() {
-            const sequence = [
-                'mission-text-1',
-                'mission-text-2',
-                'location-title',
-                'location-address',
-                'time-title',
-                'time-details',
-                'final-message'
-            ];
-            
-            let currentIndex = 0;
-            
-            function typeNext() {
-                if (currentIndex < sequence.length) {
-                    const currentId = sequence[currentIndex];
-                    typeWriter(currentId, texts[currentId], 0, function() {
-                        currentIndex++;
-                        setTimeout(typeNext, 300); // Pequeño retraso entre secciones
-                    });
-                }
-            }
-            
-            // Iniciamos la secuencia
-            typeNext();
-        }
-        
-        // Iniciamos la secuencia cuando se carga la página
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(startSequence, 500); // Pequeño retraso inicial
-        });
-    </script>
-</body>
-</html> escribir texto con efecto de máquina de escribir
+        // Función para escribir texto con efecto de máquina de escribir
         function typeWriter(elementId, text, i, fnCallback) {
             // Verificamos si el elemento existe
             const element = document.getElementById(elementId);
@@ -330,40 +296,6 @@
                 if (currentIndex < sequence.length) {
                     const currentId = sequence[currentIndex];
                     typeWriter(currentId, texts[currentId], 0, function() {
-                        currentIndex++;
-                        setTimeout(typeNext, 300); // Pequeño retraso entre secciones
-                    });
-                }
-            }
-            
-            // Iniciamos la secuencia
-            typeNext();
-        }
-        
-        // Iniciamos la secuencia cuando se carga la página
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(startSequence, 500); // Pequeño retraso inicial
-        });
-    </script>
-</body>
-</html> iniciar el efecto secuencialmente
-        function startSequence() {
-            const sequence = [
-                'mission-text-1',
-                'mission-text-2',
-                'location-title',
-                'location-address',
-                'time-title',
-                'time-details',
-                'final-message'
-            ];
-            
-            let currentIndex = 0;
-            
-            function typeNext() {
-                if (currentIndex < sequence.length) {
-                    const currentId = sequence[currentIndex];
-                    typeWriter(currentId, texts[currentId].replace(/\n/g, '<br>'), 0, function() {
                         currentIndex++;
                         setTimeout(typeNext, 300); // Pequeño retraso entre secciones
                     });
