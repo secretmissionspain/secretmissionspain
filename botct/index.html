@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOTC - Trouble Brewing Character Selector</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #2c1810, #8b4513);
+            color: #f4e4c1;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #d4af37;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            display: inline-block;
+            margin: 0 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+        
+        input, select, button {
+            padding: 10px;
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            background: #f4e4c1;
+            color: #2c1810;
+            font-size: 16px;
+        }
+        
+        button {
+            background: #d4af37;
+            color: #2c1810;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .character-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #8b4513;
+        }
+        
+        .section-title {
+            color: #d4af37;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+        
+        .character-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .character-item {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #d4af37;
+        }
+        
+        .bluffs {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+        
+        .bluff-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .bluff-item {
+            background: rgba(220, 20, 60, 0.3);
+            border: 2px solid #dc143c;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .info {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🩸 Blood on the Clocktower 🕐</h1>
+        <h2 style="text-align: center; color: #d4af37; margin-top: -20px;">Trouble Brewing - Selector de Personajes</h2>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label for="playerCount">Número de Jugadores:</label>
+                <select id="playerCount">
+                    <option value="8">8 jugadores</option>
+                    <option value="9">9 jugadores</option>
+                    <option value="10">10 jugadores</option>
+                    <option value="11">11 jugadores</option>
+                    <option value="12">12 jugadores</option>
+                    <option value="13">13 jugadores</option>
+                    <option value="14">14 jugadores</option>
+                    <option value="15">15 jugadores</option>
+                </select>
+            </div>
+            <button onclick="generateGame()">Generar Partida</button>
+        </div>
+        
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        // Personajes de Trouble Brewing
+        const characters = {
+            townsfolk: [
+                'Lavandero', 'Bibliotecario', 'Investigador', 'Chef',
+                'Empático', 'Adivino', 'Monje', 'Virgen',
+                'Vigilante', 'Soldado', 'Alcalde', 'Ermitaño', 'Mayordomo'
+            ],
+            outsiders: ['Borracho', 'Recluso', 'Saint', 'Mayordomo'],
+            minions: ['Envenenador', 'Barón', 'Scarlet Woman'],
+            demons: ['Diablillo']
+        };
+
+        // Bluffs fáciles para el Diablillo
+        const easyBluffs = [
+            'Chef', 'Empático', 'Investigador', 'Bibliotecario',
+            'Lavandero', 'Vigilante', 'Mayordomo', 'Soldado'
+        ];
+
+        function getGameComposition(playerCount) {
+            const compositions = {
+                8: { townsfolk: 5, outsiders: 1, minions: 1, demons: 1 },
+                9: { townsfolk: 5, outsiders: 2, minions: 1, demons: 1 },
+                10: { townsfolk: 7, outsiders: 0, minions: 2, demons: 1 },
+                11: { townsfolk: 7, outsiders: 2, minions: 1, demons: 1 },
+                12: { townsfolk: 7, outsiders: 2, minions: 2, demons: 1 },
+                13: { townsfolk: 9, outsiders: 0, minions: 3, demons: 1 },
+                14: { townsfolk: 9, outsiders: 1, minions: 3, demons: 1 },
+                15: { townsfolk: 9, outsiders: 2, minions: 3, demons: 1 }
+            };
+            
+            return compositions[playerCount];
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function generateGame() {
+            const playerCount = parseInt(document.getElementById('playerCount').value);
+            const composition = getGameComposition(playerCount);
+            
+            let selectedTownsfolk = [];
+            let selectedOutsiders = [];
+            let selectedMinions = [];
+            let selectedDemons = ['Diablillo'];
+            
+            // Lógica especial para Forasteros y Barón según las reglas especificadas
+            if (composition.outsiders === 0) {
+                // Si 0 forasteros originalmente (jugadores 10 y 13), añadir Barón para incluir Borracho y Recluso
+                selectedMinions.push('Barón');
+                selectedOutsiders = ['Borracho', 'Recluso'];
+                composition.townsfolk -= 2; // Compensar por los forasteros añadidos por Barón
+            } else if (composition.minions === 3) {
+                // Si necesito 3 esbirros (jugadores 13, 14, 15), debo incluir Barón porque sin Espía solo tengo 2 esbirros
+                selectedMinions.push('Barón');
+                if (composition.outsiders === 1) {
+                    // Para 14 jugadores: Barón añade Borracho y Recluso, más Saint para completar
+                    selectedOutsiders = ['Borracho', 'Recluso', 'Saint'];
+                    composition.townsfolk -= 2; // Compensar por Borracho y Recluso añadidos por Barón
+                } else if (composition.outsiders === 2) {
+                    // Para 15 jugadores: Barón añade Borracho y Recluso, se queda así
+                    selectedOutsiders = ['Borracho', 'Recluso'];
+                    composition.townsfolk -= 2; // Compensar por Borracho y Recluso añadidos por Barón
+                }
+            } else {
+                // Para el resto de casos (8, 9, 11, 12 jugadores): NO usar Barón
+                if (composition.outsiders === 1) {
+                    // Solo Borracho para 8 jugadores
+                    selectedOutsiders = ['Borracho'];
+                } else if (composition.outsiders === 2) {
+                    // 2 forasteros aleatorios para 9, 11, 12 jugadores
+                    let availableOutsiders = shuffleArray(['Borracho', 'Recluso', 'Saint']);
+                    selectedOutsiders = availableOutsiders.slice(0, 2);
+                }
+            }
+            
+            // Completar esbirros (sin Espía)
+            let availableMinions = characters.minions.filter(m => m !== 'Espía' && !selectedMinions.includes(m));
+            let remainingMinions = composition.minions - selectedMinions.length;
+            selectedMinions = selectedMinions.concat(shuffleArray(availableMinions).slice(0, remainingMinions));
+            
+            // Seleccionar aldeanos
+            let availableTownsfolk = shuffleArray(characters.townsfolk);
+            selectedTownsfolk = availableTownsfolk.slice(0, composition.townsfolk);
+            
+            // Generar bluffs fáciles
+            let usedCharacters = [...selectedTownsfolk, ...selectedOutsiders, ...selectedMinions];
+            let availableBluffs = easyBluffs.filter(b => !usedCharacters.includes(b));
+            let selectedBluffs = shuffleArray(availableBluffs).slice(0, 3);
+            
+            displayResults({
+                townsfolk: selectedTownsfolk,
+                outsiders: selectedOutsiders,
+                minions: selectedMinions,
+                demons: selectedDemons,
+                bluffs: selectedBluffs,
+                playerCount: playerCount
+            });
+        }
+
+        function displayResults(game) {
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = `
+                <div class="info">
+                    <h3>Partida para ${game.playerCount} jugadores</h3>
+                    <p><strong>Composición:</strong> ${game.townsfolk.length} Aldeanos, ${game.outsiders.length} Forasteros, ${game.minions.length} Esbirros, ${game.demons.length} Demonio</p>
+                </div>
+                
+                <div class="character-section">
+                    <div class="section-title">🏘️ Aldeanos (${game.townsfolk.length})</div>
+                    <ul class="character-list">
+                        ${game.townsfolk.map(char => `<li class="character-item">${char}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="character-section">
+                    <div class="section-title">🚪 Forasteros (${game.outsiders.length})</div>
+                    <ul class="character-list">
+                        ${game.outsiders.length > 0 ? 
+                            game.outsiders.map(char => `<li class="character-item">${char}</li>`).join('') :
+                            '<li class="character-item">Ninguno</li>'
+                        }
+                    </ul>
+                </div>
+                
+                <div class="character-section">
+                    <div class="section-title">👹 Esbirros (${game.minions.length})</div>
+                    <ul class="character-list">
+                        ${game.minions.map(char => `<li class="character-item">${char}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="character-section">
+                    <div class="section-title">😈 Demonio (${game.demons.length})</div>
+                    <ul class="character-list">
+                        ${game.demons.map(char => `<li class="character-item">${char}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="character-section bluffs">
+                    <div class="section-title">🎭 Bluffs para el Diablillo</div>
+                    <div class="bluff-list">
+                        ${game.bluffs.map(bluff => `<div class="bluff-item">${bluff}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generar una partida inicial de ejemplo
+        window.onload = function() {
+            generateGame();
+        };
+    </script>
+</body>
+</html>
