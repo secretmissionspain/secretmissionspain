@@ -5,21 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOTC - Trouble Brewing Character Selector</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Georgia', serif;
             background: linear-gradient(135deg, #2c1810, #8b4513);
             color: #f4e4c1;
-            margin: 0;
-            padding: 20px;
             min-height: 100vh;
+            padding: 10px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 15px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
@@ -27,8 +32,16 @@
             text-align: center;
             color: #d4af37;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+        }
+        
+        h2 {
+            text-align: center;
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: normal;
         }
         
         .controls {
@@ -38,23 +51,26 @@
         
         .input-group {
             display: inline-block;
-            margin: 0 15px;
+            margin: 10px 15px;
         }
         
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
             color: #d4af37;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
         
         input, select, button {
-            padding: 10px;
+            padding: 12px 16px;
             border: 2px solid #8b4513;
-            border-radius: 5px;
+            border-radius: 8px;
             background: #f4e4c1;
             color: #2c1810;
-            font-size: 16px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            width: 100%;
+            min-width: 180px;
         }
         
         button {
@@ -63,6 +79,8 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 10px;
+            min-width: 200px;
         }
         
         button:hover {
@@ -72,21 +90,21 @@
         
         .results {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
             margin-top: 30px;
         }
         
         .character-section {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
             border: 2px solid #8b4513;
         }
         
         .section-title {
             color: #d4af37;
-            font-size: 1.3em;
+            font-size: clamp(1rem, 3vw, 1.3rem);
             font-weight: bold;
             margin-bottom: 15px;
             text-align: center;
@@ -102,9 +120,10 @@
         .character-item {
             background: rgba(255, 255, 255, 0.1);
             margin: 8px 0;
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             border-left: 4px solid #d4af37;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
         
         .bluffs {
@@ -115,16 +134,19 @@
         .bluff-list {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
+            margin-top: 15px;
         }
         
         .bluff-item {
             background: rgba(220, 20, 60, 0.3);
             border: 2px solid #dc143c;
-            padding: 15px;
+            padding: 12px 20px;
             border-radius: 10px;
             font-weight: bold;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            min-width: 120px;
         }
         
         .info {
@@ -135,12 +157,77 @@
             border-radius: 10px;
             border: 2px solid #d4af37;
         }
+        
+        .info h3 {
+            color: #d4af37;
+            margin-bottom: 10px;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+        }
+        
+        .info p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.4;
+        }
+        
+        /* Mobile specific adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 5px;
+            }
+            
+            .results {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .bluff-list {
+                gap: 10px;
+            }
+            
+            .bluff-item {
+                padding: 10px 15px;
+                min-width: 100px;
+            }
+            
+            .input-group {
+                margin: 5px 10px;
+            }
+            
+            select, button {
+                min-width: 160px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .character-section {
+                padding: 12px;
+            }
+            
+            .character-item {
+                padding: 10px;
+            }
+            
+            .bluff-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .bluff-item {
+                width: 80%;
+                max-width: 200px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🩸 Blood on the Clocktower 🕐</h1>
-        <h2 style="text-align: center; color: #d4af37; margin-top: -20px;">Trouble Brewing - Selector de Personajes</h2>
+        <h2>Trouble Brewing - Selector de Personajes</h2>
         
         <div class="controls">
             <div class="input-group">
@@ -170,7 +257,7 @@
                 'Empático', 'Adivino', 'Monje', 'Virgen',
                 'Vigilante', 'Soldado', 'Alcalde', 'Ermitaño', 'Mayordomo'
             ],
-            outsiders: ['Borracho', 'Recluso', 'Saint', 'Mayordomo'],
+            outsiders: ['Borracho', 'Recluso', 'Saint'],
             minions: ['Envenenador', 'Barón', 'Scarlet Woman'],
             demons: ['Diablillo']
         };
@@ -213,39 +300,51 @@
             let selectedOutsiders = [];
             let selectedMinions = [];
             let selectedDemons = ['Diablillo'];
+            let finalOutsiderCount = composition.outsiders;
             
-            // Lógica especial para Forasteros y Barón según las reglas especificadas
-            if (composition.outsiders === 0) {
-                // Si 0 forasteros originalmente (jugadores 10 y 13), añadir Barón para incluir Borracho y Recluso
+            // Determinar si necesito el Barón (solo en partidas de 10, 13, 14 o 15 jugadores)
+            let needBaron = false;
+            
+            if ([10, 13, 14, 15].includes(playerCount)) {
+                // Caso 1: 0 forasteros originalmente (10 y 13 jugadores)
+                if (composition.outsiders === 0) {
+                    needBaron = true;
+                }
+                // Caso 2: Necesito 3 esbirros (13, 14, 15 jugadores) y no quiero Espía
+                else if (composition.minions === 3) {
+                    needBaron = true;
+                }
+            }
+            
+            if (needBaron) {
                 selectedMinions.push('Barón');
+                // Barón añade 2 forasteros ADICIONALES a los que ya debería haber
+                finalOutsiderCount += 2;
+                composition.townsfolk -= 2; // Compensar por los 2 forasteros adicionales
+                
+                // Seleccionar forasteros: siempre incluir Borracho y Recluso por el Barón
                 selectedOutsiders = ['Borracho', 'Recluso'];
-                composition.townsfolk -= 2; // Compensar por los forasteros añadidos por Barón
-            } else if (composition.minions === 3) {
-                // Si necesito 3 esbirros (jugadores 13, 14, 15), debo incluir Barón porque sin Espía solo tengo 2 esbirros
-                selectedMinions.push('Barón');
-                if (composition.outsiders === 1) {
-                    // Para 14 jugadores: Barón añade Borracho y Recluso, más Saint para completar
-                    selectedOutsiders = ['Borracho', 'Recluso', 'Saint'];
-                    composition.townsfolk -= 2; // Compensar por Borracho y Recluso añadidos por Barón
-                } else if (composition.outsiders === 2) {
-                    // Para 15 jugadores: Barón añade Borracho y Recluso, se queda así
-                    selectedOutsiders = ['Borracho', 'Recluso'];
-                    composition.townsfolk -= 2; // Compensar por Borracho y Recluso añadidos por Barón
+                
+                // Si necesito más forasteros, añadir Saint
+                if (finalOutsiderCount > 2) {
+                    selectedOutsiders.push('Saint');
                 }
             } else {
-                // Para el resto de casos (8, 9, 11, 12 jugadores): NO usar Barón
+                // Sin Barón: selección normal de forasteros
                 if (composition.outsiders === 1) {
-                    // Solo Borracho para 8 jugadores
                     selectedOutsiders = ['Borracho'];
                 } else if (composition.outsiders === 2) {
-                    // 2 forasteros aleatorios para 9, 11, 12 jugadores
-                    let availableOutsiders = shuffleArray(['Borracho', 'Recluso', 'Saint']);
+                    let availableOutsiders = shuffleArray(characters.outsiders);
                     selectedOutsiders = availableOutsiders.slice(0, 2);
                 }
             }
             
-            // Completar esbirros (sin Espía)
-            let availableMinions = characters.minions.filter(m => m !== 'Espía' && !selectedMinions.includes(m));
+            // Completar esbirros (sin Espía y sin Barón si no es necesario)
+            let availableMinions = characters.minions.filter(m => {
+                if (m === 'Espía') return false; // Nunca incluir Espía
+                if (m === 'Barón' && !needBaron) return false; // Solo incluir Barón cuando sea necesario
+                return !selectedMinions.includes(m);
+            });
             let remainingMinions = composition.minions - selectedMinions.length;
             selectedMinions = selectedMinions.concat(shuffleArray(availableMinions).slice(0, remainingMinions));
             
@@ -264,17 +363,23 @@
                 minions: selectedMinions,
                 demons: selectedDemons,
                 bluffs: selectedBluffs,
-                playerCount: playerCount
+                playerCount: playerCount,
+                originalOutsiders: getGameComposition(playerCount).outsiders,
+                finalOutsiders: finalOutsiderCount,
+                hasBaron: needBaron
             });
         }
 
         function displayResults(game) {
             const resultsDiv = document.getElementById('results');
             
+            const baronInfo = game.hasBaron ? 
+                `<br><small style="color: #ffa500;">⚠️ Barón presente: +2 forasteros adicionales (${game.originalOutsiders} → ${game.finalOutsiders})</small>` : '';
+            
             resultsDiv.innerHTML = `
                 <div class="info">
                     <h3>Partida para ${game.playerCount} jugadores</h3>
-                    <p><strong>Composición:</strong> ${game.townsfolk.length} Aldeanos, ${game.outsiders.length} Forasteros, ${game.minions.length} Esbirros, ${game.demons.length} Demonio</p>
+                    <p><strong>Composición:</strong> ${game.townsfolk.length} Aldeanos, ${game.outsiders.length} Forasteros, ${game.minions.length} Esbirros, ${game.demons.length} Demonio${baronInfo}</p>
                 </div>
                 
                 <div class="character-section">
