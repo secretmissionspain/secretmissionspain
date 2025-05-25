@@ -124,6 +124,13 @@
             border-radius: 5px;
             border-left: 4px solid #d4af37;
             font-size: clamp(0.9rem, 2.5vw, 1rem);
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        
+        .character-item:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .bluffs {
@@ -147,6 +154,13 @@
             font-weight: bold;
             font-size: clamp(0.9rem, 2.5vw, 1rem);
             min-width: 120px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        
+        .bluff-item:hover {
+            background: rgba(220, 20, 60, 0.5);
         }
         
         .info {
@@ -167,6 +181,52 @@
         .info p {
             font-size: clamp(0.9rem, 2.5vw, 1rem);
             line-height: 1.4;
+        }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: #f4e4c1;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            width: 300px;
+            max-width: 90vw;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+            border: 2px solid #d4af37;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #d4af37;
+        }
+        
+        .character-item:hover .tooltip,
+        .bluff-item:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .tooltip-title {
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1rem;
         }
         
         /* Mobile specific adjustments */
@@ -197,6 +257,11 @@
             select, button {
                 min-width: 160px;
             }
+            
+            .tooltip {
+                width: 250px;
+                font-size: 0.8rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -220,6 +285,12 @@
             .bluff-item {
                 width: 80%;
                 max-width: 200px;
+            }
+            
+            .tooltip {
+                width: 200px;
+                font-size: 0.75rem;
+                padding: 12px;
             }
         }
     </style>
@@ -253,13 +324,48 @@
         // Personajes de Trouble Brewing
         const characters = {
             townsfolk: [
-                'Lavandero PN', 'Bibliotecario PN', 'Investigador PN', 'Chef PN', 
-                'Empático CN', 'Pitoniso CN', 'Enterrador CN', 'Monje CN', 'Guardian de Cuervos',
+                'Lavandero', 'Bibliotecario', 'Investigador', 'Chef', 
+                'Empático', 'Pitoniso', 'Enterrador', 'Monje', 'Guardian de Cuervos',
                 'Virgen', 'Exterminador', 'Soldado', 'Alcalde'
             ],
             outsiders: ['Borracho', 'Recluso', 'Saint'],
             minions: ['Envenenador', 'Barón', 'Scarlet Woman'],
             demons: ['Diablillo']
+        };
+
+        // Descripciones de personajes
+        const characterDescriptions = {
+            // Aldeanos
+            'Lavandero': 'Sabes si ayer se usó el poder de un demonio.',
+            'Bibliotecario': 'Sabes que dos jugadores son dos forasteros específicos, o que no hay ninguno en juego.',
+            'Investigador': 'Sabes que dos jugadores son un esbirro específico, o que no hay ninguno en juego.',
+            'Chef': 'Sabes cuántos pares de jugadores malvados se sientan juntos.',
+            'Empático': 'Cada noche, sabes cuántos de tus vecinos vivos son malvados.',
+            'Pitoniso': 'Cada noche, elige dos jugadores: sabes si uno de ellos es un demonio. Hay un jugador bueno que registra como demonio.',
+            'Enterrador': 'Cada noche*, elige un jugador: si es bueno y estaba vivo de día, puede actuar de nuevo.',
+            'Monje': 'Cada noche*, elige un jugador (distinto de ti): está a salvo de los demonios esta noche.',
+            'Guardian de Cuervos': 'Una vez por partida, de noche, elige un jugador: si es un esbirro, muere.',
+            'Virgen': 'La primera vez que te nominan, si es de día y tu nominador es un aldeano, muere inmediatamente.',
+            'Exterminador': 'Una vez por partida, de noche, elige un jugador adyacente: si es un esbirro, muere.',
+            'Soldado': 'Eres inmune a los demonios.',
+            'Alcalde': 'Si solo quedan 3 jugadores vivos y no hay ejecuciones hoy, tu equipo gana.',
+            
+            // Forasteros
+            'Borracho': 'No sabes que eres el Borracho. Crees que eres un aldeano, pero no lo eres.',
+            'Recluso': 'Puedes registrar como malvado y como esbirro o demonio, incluso si estás muerto.',
+            'Saint': 'Si mueres por ejecución, tu equipo pierde.',
+            
+            // Esbirros
+            'Envenenador': 'Cada noche, elige un jugador: está envenenado esta noche y mañana de día.',
+            'Barón': 'Hay forasteros adicionales en juego. [+2 Forasteros]',
+            'Scarlet Woman': 'Si hay 5 o más jugadores vivos y el demonio muere, te conviertes en el demonio.',
+            
+            // Demonios
+            'Diablillo': 'Cada noche*, elige un jugador: muere. Los esbirros saben quién eres. Sabes 3 bluffs buenos.',
+            
+            // Bluffs adicionales (personajes que pueden aparecer como bluff pero no están en el juego base)
+            'Vigilante': 'Cada noche, elige un jugador: sabes si actuó esta noche.',
+            'Mayordomo': 'Cada noche, elige un jugador (distinto de ti): mañana, puedes votar solo si votan, y si votan, debes votar igual que ellos.'
         };
 
         // Bluffs fáciles para el Diablillo
@@ -290,6 +396,16 @@
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
             return shuffled;
+        }
+
+        function createTooltip(characterName) {
+            const description = characterDescriptions[characterName];
+            if (!description) return '';
+            
+            return `<div class="tooltip">
+                <div class="tooltip-title">${characterName}</div>
+                ${description}
+            </div>`;
         }
 
         function generateGame() {
@@ -385,7 +501,7 @@
                 <div class="character-section">
                     <div class="section-title">🏘️ Aldeanos (${game.townsfolk.length})</div>
                     <ul class="character-list">
-                        ${game.townsfolk.map(char => `<li class="character-item">${char}</li>`).join('')}
+                        ${game.townsfolk.map(char => `<li class="character-item">${char}${createTooltip(char)}</li>`).join('')}
                     </ul>
                 </div>
                 
@@ -393,7 +509,7 @@
                     <div class="section-title">🚪 Forasteros (${game.outsiders.length})</div>
                     <ul class="character-list">
                         ${game.outsiders.length > 0 ? 
-                            game.outsiders.map(char => `<li class="character-item">${char}</li>`).join('') :
+                            game.outsiders.map(char => `<li class="character-item">${char}${createTooltip(char)}</li>`).join('') :
                             '<li class="character-item">Ninguno</li>'
                         }
                     </ul>
@@ -402,21 +518,21 @@
                 <div class="character-section">
                     <div class="section-title">👹 Esbirros (${game.minions.length})</div>
                     <ul class="character-list">
-                        ${game.minions.map(char => `<li class="character-item">${char}</li>`).join('')}
+                        ${game.minions.map(char => `<li class="character-item">${char}${createTooltip(char)}</li>`).join('')}
                     </ul>
                 </div>
                 
                 <div class="character-section">
                     <div class="section-title">😈 Demonio (${game.demons.length})</div>
                     <ul class="character-list">
-                        ${game.demons.map(char => `<li class="character-item">${char}</li>`).join('')}
+                        ${game.demons.map(char => `<li class="character-item">${char}${createTooltip(char)}</li>`).join('')}
                     </ul>
                 </div>
                 
                 <div class="character-section bluffs">
                     <div class="section-title">🎭 Bluffs para el Diablillo</div>
                     <div class="bluff-list">
-                        ${game.bluffs.map(bluff => `<div class="bluff-item">${bluff}</div>`).join('')}
+                        ${game.bluffs.map(bluff => `<div class="bluff-item">${bluff}${createTooltip(bluff)}</div>`).join('')}
                     </div>
                 </div>
             `;
