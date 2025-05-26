@@ -1,1 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood on the Clocktower - Contador de Muertos</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Creepster&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #1a0000 0%, #4a0000 50%, #000000 100%);
+            min-height: 100vh;
+            color: #e8d5b7;
+            padding: 20px;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(139, 0, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(75, 0, 0, 0.2) 0%, transparent 50%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.02"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.02"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #8b0000;
+            border-radius: 15px;
+            box-shadow: 
+                0 0 30px rgba(139, 0, 0, 0.5),
+                inset 0 0 20px rgba(139, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #8b0000, #4a0000);
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid #660000;
+        }
+        
+        .title {
+            font-family: 'Creepster', cursive;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #e8d5b7;
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.8),
+                0 0 10px rgba(139, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #c9b037;
+            font-weight: 600;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .setup-form {
+            display: block;
+        }
+        
+        .game-controls {
+            display: none;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e8d5b7;
+            font-size: 1rem;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #8b0000;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #e8d5b7;
+            font-size: 1rem;
+            font-family: 'Cinzel', serif;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #c9b037;
+            box-shadow: 0 0 10px rgba(201, 176, 55, 0.3);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #8b0000;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #8b0000, #660000);
+            color: #e8d5b7;
+            border: 2px solid #4a0000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #a00000, #800000);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-full {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #4a0000, #2a0000);
+            border-color: #8b0000;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #660000, #4a0000);
+        }
+        
+        .btn-good {
+            background: linear-gradient(135deg, #006487, #004a66);
+            border-color: #004a66;
+        }
+        
+        .btn-good:hover {
+            background: linear-gradient(135deg, #0087b3, #006487);
+        }
+        
+        .game-stats {
+            background: rgba(139, 0, 0, 0.1);
+            border: 1px solid #8b0000;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .total-players {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .total-stat {
+            background: linear-gradient(135deg, rgba(201, 176, 55, 0.2), rgba(201, 176, 55, 0.1));
+            border: 2px solid #c9b037;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(201, 176, 55, 0.2);
+        }
+        
+        .total-stat .stat-label {
+            color: #c9b037;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .total-stat .stat-value {
+            font-size: 2rem;
+            color: #e8d5b7;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .teams-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .team-section {
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .evil-team {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.3), rgba(75, 0, 0, 0.2));
+            border: 2px solid #8b0000;
+        }
+        
+        .good-team {
+            background: linear-gradient(135deg, rgba(0, 100, 139, 0.3), rgba(0, 75, 100, 0.2));
+            border: 2px solid #006487;
+        }
+        
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .team-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .evil-team .team-title {
+            color: #ff6b6b;
+        }
+        
+        .good-team .team-title {
+            color: #6bb6ff;
+        }
+        
+        .team-total {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .evil-team .team-total {
+            color: #ff6b6b;
+        }
+        
+        .good-team .team-total {
+            color: #6bb6ff;
+        }
+        
+        .team-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .evil-stat {
+            background: rgba(139, 0, 0, 0.2);
+            border: 1px solid #8b0000;
+        }
+        
+        .evil-stat .stat-label {
+            color: #ff6b6b;
+        }
+        
+        .evil-stat .stat-value {
+            color: #ffcccc;
+        }
+        
+        .good-stat {
+            background: rgba(0, 100, 139, 0.2);
+            border: 1px solid #006487;
+        }
+        
+        .good-stat .stat-label {
+            color: #6bb6ff;
+        }
+        
+        .good-stat .stat-value {
+            color: #cce6ff;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #4a0000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stat-item.total-stat {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #c9b037;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .total-stat .stat-label,
+        .team-stats .stat-label {
+            margin-bottom: 0;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e8d5b7;
+        }
+        
+        .team-stats .stat-value {
+            font-size: 1.2rem;
+        }
+        
+        .status-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #8b0000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .status-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #c9b037;
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        
+        .game-status {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .status-ongoing {
+            background: rgba(201, 176, 55, 0.2);
+            color: #c9b037;
+            border: 1px solid #c9b037;
+        }
+        
+        .status-evil-wins {
+            background: rgba(139, 0, 0, 0.3);
+            color: #ff6b6b;
+            border: 1px solid #8b0000;
+        }
+        
+        .status-good-wins {
+            background: rgba(0, 100, 0, 0.3);
+            color: #90ee90;
+            border: 1px solid #006400;
+        }
+        
+        .death-info {
+            text-align: center;
+            font-size: 1rem;
+            color: #e8d5b7;
+            background: rgba(139, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #4a0000;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .controls-grid.with-scarlet {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .teams-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .team-stats .stat-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 5px;
+            }
+            
+            .btn {
+                padding: 14px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        .reset-btn {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+            border-color: #666;
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #666, #4a4a4a);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Blood on the Clocktower</h1>
+            <p class="subtitle">Contador de Muertos</p>
+        </div>
+        
+        <div class="content">
+            <!-- Formulario de configuración inicial -->
+            <div class="setup-form" id="setupForm">
+                <div class="form-group">
+                    <label for="totalPlayers">Número total de jugadores:</label>
+                    <input type="number" id="totalPlayers" min="5" max="20" value="7">
+                </div>
+                
+                <div class="form-group">
+                    <label for="demons">Número de diablillos:</label>
+                    <input type="number" id="demons" min="1" max="4" value="1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="minions">Número de esbirros (sin Mujer Escarlata):</label>
+                    <input type="number" id="minions" min="0" max="4" value="1">
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="scarletWoman">
+                            <span>¿Está la Mujer Escarlata en juego?</span>
+                        </div>
+                    </label>
+                </div>
+                
+                <button class="btn btn-full" onclick="initializeGame()">Iniciar Partida</button>
+            </div>
+            
+            <!-- Controles del juego -->
+            <div class="game-controls" id="gameControls">
+                <div class="game-stats">
+                    <!-- Total de jugadores -->
+                    <div class="total-players">
+                        <div class="stat-item total-stat">
+                            <div class="stat-label">Total Jugadores Vivos</div>
+                            <div class="stat-value" id="alivePlayers">0</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Jugadores por bando -->
+                    <div class="teams-container">
+                        <!-- Malvados -->
+                        <div class="team-section evil-team">
+                            <div class="team-header">
+                                <h3 class="team-title">Malvados</h3>
+                                <div class="team-total" id="totalEvil">0</div>
+                            </div>
+                            <div class="team-stats">
+                                <div class="stat-item evil-stat">
+                                    <div class="stat-label">Diablillos</div>
+                                    <div class="stat-value" id="aliveDemons">0</div>
+                                </div>
+                                <div class="stat-item evil-stat">
+                                    <div class="stat-label">Esbirros</div>
+                                    <div class="stat-value" id="aliveMinions">0</div>
+                                </div>
+                                <div class="stat-item evil-stat" id="scarletWomanStat" style="display: none;">
+                                    <div class="stat-label">Mujer Escarlata</div>
+                                    <div class="stat-value" id="aliveScarletWoman">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Buenos -->
+                        <div class="team-section good-team">
+                            <div class="team-header">
+                                <h3 class="team-title">Buenos</h3>
+                                <div class="team-total" id="totalGood">0</div>
+                            </div>
+                            <div class="team-stats">
+                                <div class="stat-item good-stat">
+                                    <div class="stat-label">Aldeanos & Forasteros</div>
+                                    <div class="stat-value" id="aliveGood">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls-grid">
+                    <button class="btn btn-danger" onclick="killDemon()">Muerte de Diablillo</button>
+                    <button class="btn btn-danger" onclick="killMinion()">Muerte de Esbirro</button>
+                    <button class="btn btn-danger" id="scarletWomanBtn" onclick="killScarletWoman()" style="display: none;">Muerte de Mujer Escarlata</button>
+                    <button class="btn btn-good" onclick="killGood()">Muerte de Bueno</button>
+                </div>
+                
+                <div class="status-panel">
+                    <div class="status-title">Estado de la Partida</div>
+                    <div class="game-status" id="gameStatus">Nadie ha ganado aún</div>
+                    <div class="death-info" id="deathInfo">Calculando...</div>
+                </div>
+                
+                <button class="btn reset-btn btn-full" onclick="resetGame()">Nueva Partida</button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        let gameState = {
+            totalPlayers: 0,
+            alivePlayers: 0,
+            demons: 0,
+            aliveDemons: 0,
+            minions: 0,
+            aliveMinions: 0,
+            scarletWoman: false,
+            aliveScarletWoman: 0,
+            good: 0,
+            aliveGood: 0,
+            gameEnded: false,
+            winner: null
+        };
+
+        function initializeGame() {
+            const totalPlayers = parseInt(document.getElementById('totalPlayers').value);
+            const demons = parseInt(document.getElementById('demons').value);
+            const minions = parseInt(document.getElementById('minions').value);
+            const scarletWoman = document.getElementById('scarletWoman').checked;
+            
+            // Validaciones
+            if (totalPlayers < 5 || totalPlayers > 20) {
+                alert('El número de jugadores debe estar entre 5 y 20');
+                return;
+            }
+            
+            const totalEvil = demons + minions + (scarletWoman ? 1 : 0);
+            if (totalEvil >= totalPlayers) {
+                alert('El número de jugadores malvados no puede ser igual o mayor al total');
+                return;
+            }
+            
+            // Inicializar estado
+            gameState.totalPlayers = totalPlayers;
+            gameState.alivePlayers = totalPlayers;
+            gameState.demons = demons;
+            gameState.aliveDemons = demons;
+            gameState.minions = minions;
+            gameState.aliveMinions = minions;
+            gameState.scarletWoman = scarletWoman;
+            gameState.aliveScarletWoman = scarletWoman ? 1 : 0;
+            gameState.good = totalPlayers - totalEvil;
+            gameState.aliveGood = gameState.good;
+            gameState.gameEnded = false;
+            gameState.winner = null;
+            
+            // Cambiar vista
+            document.getElementById('setupForm').style.display = 'none';
+            document.getElementById('gameControls').style.display = 'block';
+            
+            // Mostrar/ocultar elementos de Mujer Escarlata
+            const scarletStat = document.getElementById('scarletWomanStat');
+            const scarletBtn = document.getElementById('scarletWomanBtn');
+            const controlsGrid = document.querySelector('.controls-grid');
+            if (scarletWoman) {
+                scarletStat.style.display = 'block';
+                scarletBtn.style.display = 'block';
+                controlsGrid.classList.add('with-scarlet');
+            } else {
+                scarletStat.style.display = 'none';
+                scarletBtn.style.display = 'none';
+                controlsGrid.classList.remove('with-scarlet');
+            }
+            
+            updateDisplay();
+        }
+
+        function killDemon() {
+            if (gameState.gameEnded || gameState.aliveDemons <= 0) return;
+            
+            gameState.aliveDemons--;
+            gameState.alivePlayers--;
+            
+            // Si muere un diablillo, verificar condiciones de victoria
+            checkGoodWin();
+            updateDisplay();
+        }
+
+        function killMinion() {
+            if (gameState.gameEnded || gameState.aliveMinions <= 0) return;
+            
+            gameState.aliveMinions--;
+            gameState.alivePlayers--;
+            
+            checkEvilWin();
+            updateDisplay();
+        }
+
+        function killScarletWoman() {
+            if (gameState.gameEnded || gameState.aliveScarletWoman <= 0) return;
+            
+            gameState.aliveScarletWoman--;
+            gameState.alivePlayers--;
+            
+            // Después de matar a la Mujer Escarlata, verificar si los buenos ganan
+            checkGoodWin();
+            checkEvilWin();
+            updateDisplay();
+        }
+
+        function killGood() {
+            if (gameState.gameEnded || gameState.aliveGood <= 0) return;
+            
+            gameState.aliveGood--;
+            gameState.alivePlayers--;
+            
+            checkEvilWin();
+            updateDisplay();
+        }
+
+        function checkGoodWin() {
+            if (gameState.gameEnded) return;
+            
+            // Los buenos ganan si no hay diablillos vivos Y:
+            // - No hay Mujer Escarlata en juego, O
+            // - La Mujer Escarlata está muerta, O
+            // - Hay menos de 5 jugadores vivos
+            if (gameState.aliveDemons === 0) {
+                if (!gameState.scarletWoman || gameState.aliveScarletWoman === 0 || gameState.alivePlayers < 5) {
+                    gameState.gameEnded = true;
+                    gameState.winner = 'good';
+                }
+            }
+        }
+
+        function checkEvilWin() {
+            if (gameState.gameEnded) return;
+            
+            // Los malvados ganan si hay igual o más malvados vivos que buenos vivos
+            const aliveEvil = gameState.aliveDemons + gameState.aliveMinions + gameState.aliveScarletWoman;
+            if (aliveEvil >= gameState.aliveGood) {
+                gameState.gameEnded = true;
+                gameState.winner = 'evil';
+            }
+        }
+
+        function updateDisplay() {
+            // Calcular totales por bando
+            const totalEvil = gameState.aliveDemons + gameState.aliveMinions + gameState.aliveScarletWoman;
+            const totalGood = gameState.aliveGood;
+            
+            // Actualizar estadísticas
+            document.getElementById('alivePlayers').textContent = gameState.alivePlayers;
+            document.getElementById('totalEvil').textContent = totalEvil;
+            document.getElementById('totalGood').textContent = totalGood;
+            document.getElementById('aliveDemons').textContent = gameState.aliveDemons;
+            document.getElementById('aliveMinions').textContent = gameState.aliveMinions;
+            if (gameState.scarletWoman) {
+                document.getElementById('aliveScarletWoman').textContent = gameState.aliveScarletWoman;
+            }
+            document.getElementById('aliveGood').textContent = gameState.aliveGood;
+            
+            // Actualizar estado del juego
+            const statusElement = document.getElementById('gameStatus');
+            const deathInfoElement = document.getElementById('deathInfo');
+            
+            if (gameState.gameEnded) {
+                if (gameState.winner === 'good') {
+                    statusElement.textContent = 'Ganan los Aldeanos';
+                    statusElement.className = 'game-status status-good-wins';
+                    deathInfoElement.textContent = 'La partida ha terminado';
+                } else if (gameState.winner === 'evil') {
+                    statusElement.textContent = 'Ganan los Diablos';
+                    statusElement.className = 'game-status status-evil-wins';
+                    deathInfoElement.textContent = 'La partida ha terminado';
+                }
+            } else {
+                statusElement.textContent = 'Nadie ha ganado aún';
+                statusElement.className = 'game-status status-ongoing';
+                
+                // Calcular cuántos aldeanos deben morir para que gane el diablo
+                const aliveEvil = gameState.aliveDemons + gameState.aliveMinions + gameState.aliveScarletWoman;
+                const goodDeathsNeeded = Math.max(0, gameState.aliveGood - aliveEvil);
+                
+                if (goodDeathsNeeded === 0) {
+                    deathInfoElement.textContent = 'Los malvados pueden ganar en la siguiente muerte';
+                } else {
+                    deathInfoElement.textContent = `Deben morir ${goodDeathsNeeded} buenos más para que ganen los diablos`;
+                }
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('setupForm').style.display = 'block';
+            document.getElementById('gameControls').style.display = 'none';
+            
+            // Resetear formulario
+            document.getElementById('totalPlayers').value = '7';
+            document.getElementById('demons').value = '1';
+            document.getElementById('minions').value = '1';
+            document.getElementById('scarletWoman').checked = false;
+        }
+
+        // Prevenir valores negativos en los inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberInputs = document.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value < 0) this.value = 0;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
