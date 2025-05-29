@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transmisión Interceptada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff88;
+            font-family: 'Courier Prime', monospace;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 136, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 30%, rgba(0, 255, 136, 0.05) 50%, transparent 70%);
+            overflow-x: hidden;
+        }
+        
+        .static-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 136, 0.03) 2px,
+                    rgba(0, 255, 136, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: -1;
+            animation: staticMove 0.1s infinite linear;
+        }
+        
+        @keyframes staticMove {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(4px); }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 20, 30, 0.95));
+            border: 3px solid #00ff88;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 136, 0.4),
+                inset 0 0 30px rgba(0, 255, 136, 0.1),
+                0 0 100px rgba(0, 255, 136, 0.2);
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, #00ff88, #ffd700, #00ff88, #ff6b35, #00ff88);
+            z-index: -1;
+            border-radius: 18px;
+            animation: borderPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes borderPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .status-bar {
+            background: rgba(0, 255, 136, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            border: 1px solid #00ff88;
+        }
+        
+        .header::after {
+            content: 'ALTO SECRETO';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            background: linear-gradient(45deg, #ff6b35, #ff0000);
+            color: white;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(20deg);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            animation: dangerGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes dangerGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+        }
+        
+        .typewriter-text {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+            position: relative;
+        }
+        
+        .cursor {
+            display: inline-block;
+            background-color: #00ff88;
+            width: 3px;
+            height: 1.4em;
+            animation: cursorBlink 1.2s infinite;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+        }
+        
+        @keyframes cursorBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .key-word {
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .location-highlight {
+            color: #ff6b35;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.8);
+            background: rgba(255, 107, 53, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .warning-section {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 0, 0, 0.1));
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            position: relative;
+            display: none;
+        }
+        
+        .warning-section::before {
+            content: '⚠';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #ff6b35;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            animation: warningPulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes warningPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .transmission-end {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px dashed #00ff88;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .static-effect {
+            opacity: 0;
+            animation: staticFlicker 0.1s infinite;
+        }
+        
+        @keyframes staticFlicker {
+            0%, 90% { opacity: 1; }
+            91%, 100% { opacity: 0.7; }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+                letter-spacing: 2px;
+            }
+            
+            .typewriter-text {
+                font-size: 16px;
+                line-height: 1.6;
+            }
+            
+            .header::after {
+                top: -15px;
+                right: -15px;
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+            
+            .warning-section {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 5px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                letter-spacing: 1px;
+            }
+            
+            .typewriter-text {
+                font-size: 15px;
+            }
+            
+            .status-bar {
+                font-size: 12px;
+                letter-spacing: 1px;
+            }
+        }
+        
+        .glitch {
+            animation: glitchEffect 0.3s ease-in-out;
+        }
+        
+        @keyframes glitchEffect {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-2px); }
+            40% { transform: translateX(2px); }
+            60% { transform: translateX(-1px); }
+            80% { transform: translateX(1px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="static-overlay"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>TRANSMISIÓN INTERCEPTADA</h1>
+        </div>
+        
+        <div class="status-bar">
+            CANAL SEGURO ACTIVADO • ENCRIPTACIÓN NIVEL 5 • CONEXIÓN ESTABLE
+        </div>
+        
+        <div id="typewriter-container">
+            <div class="typewriter-text" id="typewriter"></div>
+            <span class="cursor" id="cursor"></span>
+        </div>
+        
+        <div class="warning-section" id="warning-section">
+            <div class="typewriter-text" id="warning-text"></div>
+        </div>
+        
+        <div class="transmission-end" id="transmission-end">
+            <div class="static-effect">
+                ═══ FIN DE TRANSMISIÓN ═══<br>
+                <small>Canal cerrado • Destruir después de leer</small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mainText = `Hola Agente,
+
+Muy bien agente, ha dado con el lugar de encuentro, **RICOTE**. 
+
+Hemos conseguido infiltrar un agente encubierto como empleado del local.
+
+La clave para que le dé las instrucciones con la siguiente pista es **"PETRONI"**, sí como la marca de vermut, dígaselo al personal que le atenderá y le hará la entrega.
+
+Una cosa más, gracias a haber averiguado la anterior pista, la organización le ha asignado un agente que le facilitará el transporte, pero hay un problema...`;
+
+        const warningText = `No habla Español, no va a poder comunicarse con él. Solo le tiene que decir el lugar al que quiere ir.
+
+##PRECAUCIÓN:## Este agente no conoce su identidad. Mantenga su cobertura en todo momento.`;
+
+        let currentIndex = 0;
+        let currentSection = 'main';
+        let isTyping = true;
+        
+        function typeWriter() {
+            const typewriterElement = document.getElementById('typewriter');
+            const cursor = document.getElementById('cursor');
+            
+            if (currentSection === 'main' && currentIndex < mainText.length) {
+                let char = mainText.charAt(currentIndex);
+                
+                if (char === '\n') {
+                    typewriterElement.innerHTML += '<br><br>';
+                } else if (char === '*' && mainText.charAt(currentIndex + 1) === '*') {
+                    // Detectar **texto** para palabras clave
+                    let endIndex = mainText.indexOf('**', currentIndex + 2);
+                    if (endIndex !== -1) {
+                        let keyText = mainText.substring(currentIndex + 2, endIndex);
+                        if (keyText.includes('RICOTE')) {
+                            typewriterElement.innerHTML += `<span class="location-highlight">${keyText}</span>`;
+                        } else {
+                            typewriterElement.innerHTML += `<span class="key-word">${keyText}</span>`;
+                        }
+                        currentIndex = endIndex + 1; // Saltar el cierre **
+                    } else {
+                        typewriterElement.innerHTML += char;
+                    }
+                } else {
+                    typewriterElement.innerHTML += char;
+                }
+                currentIndex++;
+                
+                // Efecto de glitch ocasional
+                if (Math.random() < 0.02) {
+                    typewriterElement.classList.add('glitch');
+                    setTimeout(() => typewriterElement.classList.remove('glitch'), 300);
+                }
+                
+                setTimeout(typeWriter, 60 + Math.random() * 40);
+            } else if (currentSection === 'main') {
+                // Pausa dramática antes de mostrar la advertencia
+                setTimeout(() => {
+                    document.getElementById('warning-section').style.display = 'block';
+                    currentSection = 'warning';
+                    currentIndex = 0;
+                    setTimeout(typeWriter, 1000);
+                }, 1500);
+            } else if (currentSection === 'warning' && currentIndex < warningText.length) {
+                const warningElement = document.getElementById('warning-text');
+                let char = warningText.charAt(currentIndex);
+                
+                if (char === '\n') {
+                    warningElement.innerHTML += '<br><br>';
+                } else if (char === '#' && warningText.charAt(currentIndex + 1) === '#') {
+                    // Detectar ##texto## para advertencias
+                    let endIndex = warningText.indexOf('##', currentIndex + 2);
+                    if (endIndex !== -1) {
+                        let warningTextContent = warningText.substring(currentIndex + 2, endIndex);
+                        warningElement.innerHTML += `<span style="color: #ff6b35; font-weight: bold;">${warningTextContent}</span>`;
+                        currentIndex = endIndex + 1; // Saltar el cierre ##
+                    } else {
+                        warningElement.innerHTML += char;
+                    }
+                } else {
+                    warningElement.innerHTML += char;
+                }
+                currentIndex++;
+                setTimeout(typeWriter, 50 + Math.random() * 30);
+            } else {
+                // Finalizar transmisión
+                isTyping = false;
+                cursor.style.display = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('transmission-end').style.display = 'block';
+                    
+                    // Efecto de parpadeo final
+                    setTimeout(() => {
+                        const container = document.querySelector('.container');
+                        let flickerCount = 0;
+                        const flickerInterval = setInterval(() => {
+                            container.style.opacity = container.style.opacity === '0.3' ? '1' : '0.3';
+                            flickerCount++;
+                            if (flickerCount >= 6) {
+                                clearInterval(flickerInterval);
+                                container.style.opacity = '1';
+                            }
+                        }, 200);
+                    }, 2000);
+                }, 2000);
+            }
+        }
+        
+        // Efectos de sonido simulados (visual)
+        function addStaticEffect() {
+            const staticElements = document.querySelectorAll('.static-effect');
+            staticElements.forEach(el => {
+                el.style.opacity = Math.random() > 0.7 ? '0.5' : '1';
+            });
+        }
+        
+        // Iniciar efectos
+        window.addEventListener('load', () => {
+            // Efecto de conexión inicial
+            setTimeout(() => {
+                const statusBar = document.querySelector('.status-bar');
+                statusBar.style.animation = 'none';
+                statusBar.style.background = 'rgba(0, 255, 136, 0.3)';
+            }, 2000);
+            
+            // Iniciar máquina de escribir
+            setTimeout(typeWriter, 1500);
+            
+            // Efectos de estática periódicos
+            setInterval(addStaticEffect, 3000);
+        });
+        
+        // Efecto de parpadeo ocasional en toda la página
+        setInterval(() => {
+            if (Math.random() < 0.1) {
+                document.body.style.filter = 'brightness(1.2) contrast(1.1)';
+                setTimeout(() => {
+                    document.body.style.filter = 'none';
+                }, 100);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
