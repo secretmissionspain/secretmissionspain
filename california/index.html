@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISIÓN CLASIFICADA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            color: #00ff41;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Efecto de película granulada */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, transparent 20%, rgba(255,255,255,0.01) 21%, rgba(255,255,255,0.01) 34%, transparent 35%, transparent),
+                linear-gradient(0deg, rgba(0,0,0,0.1), transparent 50%, rgba(0,0,0,0.1));
+            opacity: 0.3;
+            pointer-events: none;
+            animation: grain 0.8s steps(10) infinite;
+        }
+        
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            30% { transform: translate(3%, -1%); }
+            50% { transform: translate(12%, 2%); }
+            70% { transform: translate(9%, 9%); }
+            90% { transform: translate(-1%, 4%); }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border: 2px solid #00ff41;
+            padding: 15px 25px;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(0, 255, 65, 0.3); }
+            to { box-shadow: 0 0 30px rgba(0, 255, 65, 0.6); }
+        }
+        
+        .classified {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        .subtitle {
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+        
+        .message-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff41;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 65, 0.2),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .typewriter {
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            line-height: 1.8;
+            min-height: 200px;
+            position: relative;
+        }
+        
+        .cursor {
+            display: inline-block;
+            background-color: #00ff41;
+            margin-left: 2px;
+            width: 12px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInFooter 1s ease-in-out 15s forwards;
+        }
+        
+        @keyframes fadeInFooter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stamp {
+            color: #ff4444;
+            font-weight: bold;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #ff4444;
+            transform: rotate(-5deg);
+            border: 2px solid #ff4444;
+            padding: 5px 15px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        
+        /* Efectos de luces parpadeantes */
+        .ambient-light {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 65, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .light-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .light-2 { top: 60%; right: 15%; animation-delay: 2s; }
+        .light-3 { bottom: 20%; left: 20%; animation-delay: 4s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
+            50% { transform: translateY(-20px) scale(1.1); opacity: 0.6; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 12px 20px;
+                margin-bottom: 30px;
+            }
+            
+            .message-container {
+                padding: 20px;
+            }
+            
+            .typewriter {
+                min-height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 10px 15px;
+                margin-bottom: 25px;
+            }
+            
+            .message-container {
+                padding: 15px;
+            }
+            
+            .classified {
+                letter-spacing: 2px;
+            }
+            
+            .subtitle {
+                letter-spacing: 0.5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Luces ambientales -->
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+    <div class="ambient-light light-3"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="classified">CLASIFICADO</div>
+            <div class="subtitle">SOLO PERSONAL AUTORIZADO</div>
+        </div>
+        
+        <div class="message-container">
+            <div class="typewriter" id="typewriter">
+                <span class="cursor" id="cursor">&nbsp;</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="stamp">ALTO SECRETO</div>
+        </div>
+    </div>
+
+    <script>
+        const message = "Hola Agente,\n\nGenial, ya te falta menos para llegar al final.\n\nLa siguiente pista la encontrarás en la California de tus amigos.\n\nLa hemos dejado dentro, cuidado, ellos no saben nada.\n\nEncuéntrala y estarás más cerca de descubrir tu destino.";
+        
+        const typewriter = document.getElementById('typewriter');
+        const cursor = document.getElementById('cursor');
+        
+        let i = 0;
+        let isTyping = true;
+        
+        function typeText() {
+            if (i < message.length) {
+                if (message[i] === '\n') {
+                    typewriter.innerHTML += '<br>';
+                } else {
+                    typewriter.innerHTML += message[i];
+                }
+                i++;
+                
+                // Velocidad variable para más realismo
+                const speed = Math.random() * 100 + 50;
+                setTimeout(typeText, speed);
+            } else {
+                // Cuando termine de escribir, ocultar el cursor después de 2 segundos
+                setTimeout(() => {
+                    cursor.style.display = 'none';
+                    isTyping = false;
+                }, 2000);
+            }
+        }
+        
+        // Agregar efecto de sonido de teclas (simulado visualmente)
+        function addTypingEffect() {
+            if (isTyping) {
+                const container = document.querySelector('.message-container');
+                container.style.transform = 'scale(1.001)';
+                setTimeout(() => {
+                    container.style.transform = 'scale(1)';
+                }, 50);
+            }
+        }
+        
+        // Iniciar el efecto después de 1 segundo
+        setTimeout(() => {
+            typeText();
+            // Efecto visual de "teclear"
+            const typingInterval = setInterval(() => {
+                if (!isTyping) {
+                    clearInterval(typingInterval);
+                } else {
+                    addTypingEffect();
+                }
+            }, 100);
+        }, 1000);
+        
+        // Efecto de parpadeo adicional en elementos
+        setInterval(() => {
+            const header = document.querySelector('.header');
+            header.style.borderColor = Math.random() > 0.9 ? '#ff4444' : '#00ff41';
+        }, 2000);
+    </script>
+</body>
+</html>
