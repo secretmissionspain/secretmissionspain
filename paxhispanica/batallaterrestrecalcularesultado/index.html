@@ -248,24 +248,8 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Tipo de carga</label>
-                <select id="cargoType">
-                    <option value="botin">Botín</option>
-                    <option value="esclavo">Esclavo</option>
-                    <option value="ciudadano">Ciudadano</option>
-                </select>
-            </div>
-
-            <div class="form-group hidden" id="citizenNationality">
-                <label>Nacionalidad del ciudadano</label>
-                <select id="citizenNation">
-                    <option value="espana">Ciudadano Español</option>
-                    <option value="holanda">Ciudadano Holandés</option>
-                    <option value="francia">Ciudadano Francés</option>
-                    <option value="inglaterra">Ciudadano Inglés</option>
-                    <option value="curlandia">Ciudadano Curlandés</option>
-                </select>
+            <div id="cargoDetails">
+                <!-- Se llenarán dinámicamente según el número de barcos -->
             </div>
         </div>
 
@@ -323,18 +307,60 @@
         };
 
         // Event listeners
-        document.getElementById('cargoType').addEventListener('change', updateCargoOptions);
         document.getElementById('targetType').addEventListener('change', updateTargetDetails);
         document.getElementById('fleetNationality').addEventListener('change', updateCargoOptions);
+        document.getElementById('numShips').addEventListener('change', updateCargoDetails);
 
         function updateCargoOptions() {
-            const cargoType = document.getElementById('cargoType').value;
-            const citizenDiv = document.getElementById('citizenNationality');
+            updateCargoDetails();
+        }
+
+        function updateCargoDetails() {
+            const numShips = parseInt(document.getElementById('numShips').value);
+            const cargoDetailsDiv = document.getElementById('cargoDetails');
+            
+            let html = '<h3>🚢 Configuración de Carga por Barco</h3>';
+            
+            for (let i = 1; i <= numShips; i++) {
+                html += `
+                    <div class="actor-card">
+                        <h4>Barco ${i}</h4>
+                        <div class="form-group">
+                            <label>Tipo de carga del Barco ${i}</label>
+                            <select id="cargoType-${i}" onchange="updateShipCargoOptions(${i})">
+                                <option value="ninguna">Ninguna</option>
+                                <option value="botin">Botín</option>
+                                <option value="esclavo">Esclavo</option>
+                                <option value="ciudadano">Ciudadano</option>
+                            </select>
+                        </div>
+                        <div id="cargoOptions-${i}"></div>
+                    </div>
+                `;
+            }
+            
+            cargoDetailsDiv.innerHTML = html;
+        }
+
+        function updateShipCargoOptions(shipId) {
+            const cargoType = document.getElementById(`cargoType-${shipId}`).value;
+            const optionsDiv = document.getElementById(`cargoOptions-${shipId}`);
             
             if (cargoType === 'ciudadano') {
-                citizenDiv.classList.remove('hidden');
+                optionsDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>Nacionalidad del ciudadano</label>
+                        <select id="citizenNation-${shipId}">
+                            <option value="espana">Ciudadano Español</option>
+                            <option value="holanda">Ciudadano Holandés</option>
+                            <option value="francia">Ciudadano Francés</option>
+                            <option value="inglaterra">Ciudadano Inglés</option>
+                            <option value="curlandia">Ciudadano Curlandés</option>
+                        </select>
+                    </div>
+                `;
             } else {
-                citizenDiv.classList.add('hidden');
+                optionsDiv.innerHTML = '';
             }
         }
 
@@ -630,16 +656,27 @@
         }
 
         function gatherBattleData() {
+            const numShips = parseInt(document.getElementById('numShips').value);
+            const cargo = [];
+            
+            for (let i = 1; i <= numShips; i++) {
+                const cargoType = document.getElementById(`cargoType-${i}`).value;
+                const shipCargo = { type: cargoType };
+                
+                if (cargoType === 'ciudadano') {
+                    shipCargo.nationality = document.getElementById(`citizenNation-${i}`).value;
+                }
+                
+                cargo.push(shipCargo);
+            }
+            
             return {
                 warTime: document.getElementById('warTime').value === 'true',
                 fleet: {
-                    ships: parseInt(document.getElementById('numShips').value),
+                    ships: numShips,
                     legality: document.getElementById('fleetLegality').value,
                     nationality: document.getElementById('fleetNationality').value,
-                    cargo: {
-                        type: document.getElementById('cargoType').value,
-                        nationality: document.getElementById('citizenNation')?.value
-                    }
+                    cargo: cargo
                 },
                 target: gatherTargetData(),
                 actors: gatherActorsData()
@@ -722,10 +759,16 @@
         }
 
         function validateBattle(battle) {
-            // Validar carga ciudadana
-            if (battle.fleet.cargo.type === 'ciudadano' && 
-                battle.fleet.cargo.nationality !== battle.fleet.nationality) {
-                return { valid: false, message: 'El ciudadano debe ser de la misma nacionalidad que la flota' };
+            // Validar carga ciudadana para cada barco
+            for (let i = 0; i < battle.fleet.cargo.length; i++) {
+                const cargo = battle.fleet.cargo[i];
+                if (cargo.type === 'ciudadano' && 
+                    cargo.nationality !== battle.fleet.nationality) {
+                    return { 
+                        valid: false, 
+                        message: `El ciudadano del Barco ${i + 1} debe ser de la misma nacionalidad que la flota (${nationalities[battle.fleet.nationality].name})` 
+                    };
+                }
             }
             
             // Validar ataque según legalidad
