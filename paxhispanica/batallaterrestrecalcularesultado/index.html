@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Batalla Terrestre - Pax Hispánica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c1810, #8b4513);
+            color: #f4f4f4;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 2rem;
+        }
+
+        .section {
+            background: rgba(0,0,0,0.7);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #8b4513;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #8b4513;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ffd700;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #f4f4f4;
+            font-size: 16px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+
+        .flag {
+            display: inline-block;
+            width: 20px;
+            height: 15px;
+            margin-right: 8px;
+            border: 1px solid #333;
+        }
+
+        .flag.espana { background: #8B4B9A; }
+        .flag.holanda { background: #FF8C00; }
+        .flag.francia { background: #0066CC; }
+        .flag.inglaterra { background: #CC0000; }
+        .flag.curlandia { background: #228B22; }
+
+        button {
+            background: linear-gradient(135deg, #8b4513, #cd853f);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #cd853f, #daa520);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .actor-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #8b4513;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .decision-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border: 3px solid #ffd700;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .force-display {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .force-attacker {
+            color: #ff6b6b;
+        }
+
+        .force-defender {
+            color: #4ecdc4;
+        }
+
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .success {
+            background: #44ff44;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .warning {
+            background: #ffaa00;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .decision-buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚔️ Calculadora de Batalla Terrestre - Pax Hispánica ⚔️</h1>
+        
+        <!-- Configuración inicial -->
+        <div class="section">
+            <h2>⚡ Configuración de Batalla</h2>
+            <div class="form-group">
+                <label>¿Es época de guerra?</label>
+                <select id="warTime">
+                    <option value="false">No</option>
+                    <option value="true">Sí</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Flota Atacante -->
+        <div class="section">
+            <h2>🚢 Flota Atacante</h2>
+            
+            <div class="form-group">
+                <label>Número de barcos (1-3)</label>
+                <select id="numShips">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Legalidad de la flota</label>
+                <select id="fleetLegality">
+                    <option value="saqueador">Saqueador</option>
+                    <option value="contrabandista">Contrabandista</option>
+                    <option value="conquistador">Conquistador</option>
+                    <option value="corsario">Corsario</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nacionalidad de la flota</label>
+                <select id="fleetNationality">
+                    <option value="espana"><span class="flag espana"></span>España</option>
+                    <option value="holanda"><span class="flag holanda"></span>Holanda</option>
+                    <option value="francia"><span class="flag francia"></span>Francia</option>
+                    <option value="inglaterra"><span class="flag inglaterra"></span>Inglaterra</option>
+                    <option value="curlandia"><span class="flag curlandia"></span>Curlandia</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de carga</label>
+                <select id="cargoType">
+                    <option value="botin">Botín</option>
+                    <option value="esclavo">Esclavo</option>
+                    <option value="ciudadano">Ciudadano</option>
+                </select>
+            </div>
+
+            <div class="form-group hidden" id="citizenNationality">
+                <label>Nacionalidad del ciudadano</label>
+                <select id="citizenNation">
+                    <option value="espana">Ciudadano Español</option>
+                    <option value="holanda">Ciudadano Holandés</option>
+                    <option value="francia">Ciudadano Francés</option>
+                    <option value="inglaterra">Ciudadano Inglés</option>
+                    <option value="curlandia">Ciudadano Curlandés</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Objetivo -->
+        <div class="section">
+            <h2>🎯 Objetivo a Atacar</h2>
+            
+            <div class="form-group">
+                <label>Tipo de objetivo</label>
+                <select id="targetType">
+                    <option value="tribu">Tribu</option>
+                    <option value="mision">Misión</option>
+                    <option value="colonia">Colonia</option>
+                    <option value="revuelta">Revuelta</option>
+                </select>
+            </div>
+
+            <div id="targetDetails" class="form-group">
+                <!-- Se llenarán dinámicamente según el tipo de objetivo -->
+            </div>
+        </div>
+
+        <!-- Actores adicionales -->
+        <div class="section">
+            <h2>👥 Actores Adicionales</h2>
+            <button onclick="addActor()">Añadir Actor</button>
+            <div id="actorsList"></div>
+        </div>
+
+        <!-- Botón de cálculo -->
+        <div class="section">
+            <button onclick="calculateBattle()" style="width: 100%; font-size: 1.2rem; padding: 15px;">
+                ⚔️ Calcular Batalla
+            </button>
+        </div>
+
+        <!-- Resultados -->
+        <div id="results" class="results hidden">
+            <h2>📊 Resultados de la Batalla</h2>
+            <div id="battleResults"></div>
+        </div>
+    </div>
+
+    <script>
+        let actors = [];
+        let battleState = {};
+
+        // Configuración de nacionalidades
+        const nationalities = {
+            espana: { name: 'España', color: '#8B4B9A' },
+            holanda: { name: 'Holanda', color: '#FF8C00' },
+            francia: { name: 'Francia', color: '#0066CC' },
+            inglaterra: { name: 'Inglaterra', color: '#CC0000' },
+            curlandia: { name: 'Curlandia', color: '#228B22' }
+        };
+
+        // Event listeners
+        document.getElementById('cargoType').addEventListener('change', updateCargoOptions);
+        document.getElementById('targetType').addEventListener('change', updateTargetDetails);
+        document.getElementById('fleetNationality').addEventListener('change', updateCargoOptions);
+
+        function updateCargoOptions() {
+            const cargoType = document.getElementById('cargoType').value;
+            const citizenDiv = document.getElementById('citizenNationality');
+            
+            if (cargoType === 'ciudadano') {
+                citizenDiv.classList.remove('hidden');
+            } else {
+                citizenDiv.classList.add('hidden');
+            }
+        }
+
+        function updateTargetDetails() {
+            const targetType = document.getElementById('targetType').value;
+            const detailsDiv = document.getElementById('targetDetails');
+            
+            let html = '';
+            
+            switch(targetType) {
+                case 'tribu':
+                    html = '<p class="warning">Tipo de ataque: Esclavización</p>';
+                    break;
+                    
+                case 'mision':
+                    html = `
+                        <label>Tipo de misión</label>
+                        <select id="missionType">
+                            <option value="parroquia">Parroquia</option>
+                            <option value="catedral">Catedral</option>
+                        </select>
+                        <div id="missionDetails"></div>
+                    `;
+                    break;
+                    
+                case 'colonia':
+                    html = `
+                        <label>Nacionalidad de la colonia</label>
+                        <select id="colonyNationality">
+                            <option value="espana">España</option>
+                            <option value="holanda">Holanda</option>
+                            <option value="francia">Francia</option>
+                            <option value="inglaterra">Inglaterra</option>
+                            <option value="curlandia">Curlandia</option>
+                        </select>
+                        
+                        <label>¿Está fortificada?</label>
+                        <select id="colonyFortified">
+                            <option value="false">No</option>
+                            <option value="true">Sí</option>
+                        </select>
+                        
+                        <label>Tipo de habitante</label>
+                        <select id="colonyInhabitant">
+                            <option value="esclavo">Esclavo</option>
+                            <option value="ciudadano">Ciudadano</option>
+                        </select>
+                        
+                        <div id="colonyInhabitantDetails"></div>
+                        <p class="warning">Tipo de ataque: Ataque</p>
+                    `;
+                    break;
+                    
+                case 'revuelta':
+                    html = `
+                        <label>Tipo de revuelta</label>
+                        <select id="revoltType">
+                            <option value="fiscal">Fiscal</option>
+                            <option value="esclavos">De esclavos</option>
+                        </select>
+                        <p class="warning">Tipo de ataque: Ataque</p>
+                    `;
+                    break;
+            }
+            
+            detailsDiv.innerHTML = html;
+            
+            // Añadir event listeners dinámicos
+            if (targetType === 'mision') {
+                setTimeout(() => {
+                    document.getElementById('missionType').addEventListener('change', updateMissionDetails);
+                    updateMissionDetails();
+                }, 100);
+            }
+            
+            if (targetType === 'colonia') {
+                setTimeout(() => {
+                    document.getElementById('colonyInhabitant').addEventListener('change', updateColonyInhabitantDetails);
+                    updateColonyInhabitantDetails();
+                }, 100);
+            }
+        }
+
+        function updateMissionDetails() {
+            const missionType = document.getElementById('missionType').value;
+            const detailsDiv = document.getElementById('missionDetails');
+            
+            if (missionType === 'parroquia') {
+                detailsDiv.innerHTML = '<p class="warning">Tipo de ataque: Esclavización</p>';
+            } else if (missionType === 'catedral') {
+                detailsDiv.innerHTML = `
+                    <label>Nacionalidad de la catedral</label>
+                    <select id="cathedralNationality">
+                        <option value="espana">España</option>
+                        <option value="holanda">Holanda</option>
+                        <option value="francia">Francia</option>
+                        <option value="inglaterra">Inglaterra</option>
+                        <option value="curlandia">Curlandia</option>
+                    </select>
+                    
+                    <label>Nacionalidad del ciudadano</label>
+                    <select id="cathedralCitizenNationality">
+                        <option value="espana">España</option>
+                        <option value="holanda">Holanda</option>
+                        <option value="francia">Francia</option>
+                        <option value="inglaterra">Inglaterra</option>
+                        <option value="curlandia">Curlandia</option>
+                    </select>
+                    <p class="warning">Tipo de ataque: Ataque</p>
+                `;
+            }
+        }
+
+        function updateColonyInhabitantDetails() {
+            const inhabitantType = document.getElementById('colonyInhabitant').value;
+            const detailsDiv = document.getElementById('colonyInhabitantDetails');
+            
+            if (inhabitantType === 'ciudadano') {
+                detailsDiv.innerHTML = `
+                    <label>Nacionalidad del ciudadano</label>
+                    <select id="colonyInhabitantNationality">
+                        <option value="espana">España</option>
+                        <option value="holanda">Holanda</option>
+                        <option value="francia">Francia</option>
+                        <option value="inglaterra">Inglaterra</option>
+                        <option value="curlandia">Curlandia</option>
+                    </select>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function addActor() {
+            const actorId = Date.now();
+            const actorDiv = document.createElement('div');
+            actorDiv.className = 'actor-card';
+            actorDiv.id = `actor-${actorId}`;
+            
+            actorDiv.innerHTML = `
+                <h3>Actor ${actors.length + 1}</h3>
+                <div class="form-group">
+                    <label>Tipo de actor</label>
+                    <select id="actorType-${actorId}" onchange="updateActorDetails(${actorId})">
+                        <option value="colonia">Colonia</option>
+                        <option value="revuelta">Revuelta</option>
+                        <option value="mision">Misión</option>
+                    </select>
+                </div>
+                <div id="actorDetails-${actorId}"></div>
+                <button onclick="removeActor(${actorId})" style="background: #ff4444;">Eliminar Actor</button>
+            `;
+            
+            document.getElementById('actorsList').appendChild(actorDiv);
+            actors.push({ id: actorId, element: actorDiv });
+            updateActorDetails(actorId);
+        }
+
+        function removeActor(actorId) {
+            const actorElement = document.getElementById(`actor-${actorId}`);
+            if (actorElement) {
+                actorElement.remove();
+                actors = actors.filter(actor => actor.id !== actorId);
+            }
+        }
+
+        function updateActorDetails(actorId) {
+            const actorType = document.getElementById(`actorType-${actorId}`).value;
+            const detailsDiv = document.getElementById(`actorDetails-${actorId}`);
+            
+            let html = '';
+            
+            switch(actorType) {
+                case 'colonia':
+                    html = `
+                        <label>Nacionalidad de la colonia</label>
+                        <select id="actorColonyNationality-${actorId}">
+                            <option value="espana">España</option>
+                            <option value="holanda">Holanda</option>
+                            <option value="francia">Francia</option>
+                            <option value="inglaterra">Inglaterra</option>
+                            <option value="curlandia">Curlandia</option>
+                        </select>
+                        
+                        <label>Tipo de habitante</label>
+                        <select id="actorColonyInhabitant-${actorId}" onchange="updateActorColonyInhabitantDetails(${actorId})">
+                            <option value="esclavo">Esclavo</option>
+                            <option value="ciudadano">Ciudadano</option>
+                        </select>
+                        
+                        <div id="actorColonyInhabitantDetails-${actorId}"></div>
+                    `;
+                    break;
+                    
+                case 'revuelta':
+                    html = `
+                        <label>Tipo de revuelta</label>
+                        <select id="actorRevoltType-${actorId}">
+                            <option value="fiscal">Fiscal</option>
+                            <option value="esclavos">De esclavos</option>
+                        </select>
+                    `;
+                    break;
+                    
+                case 'mision':
+                    html = `
+                        <label>Tipo de misión</label>
+                        <select id="actorMissionType-${actorId}" onchange="updateActorMissionDetails(${actorId})">
+                            <option value="parroquia">Parroquia</option>
+                            <option value="catedral">Catedral</option>
+                        </select>
+                        <div id="actorMissionDetails-${actorId}"></div>
+                    `;
+                    break;
+            }
+            
+            detailsDiv.innerHTML = html;
+            
+            // Activar event listeners
+            if (actorType === 'colonia') {
+                setTimeout(() => updateActorColonyInhabitantDetails(actorId), 100);
+            }
+            if (actorType === 'mision') {
+                setTimeout(() => updateActorMissionDetails(actorId), 100);
+            }
+        }
+
+        function updateActorColonyInhabitantDetails(actorId) {
+            const inhabitantType = document.getElementById(`actorColonyInhabitant-${actorId}`).value;
+            const detailsDiv = document.getElementById(`actorColonyInhabitantDetails-${actorId}`);
+            
+            if (inhabitantType === 'ciudadano') {
+                detailsDiv.innerHTML = `
+                    <label>Nacionalidad del ciudadano</label>
+                    <select id="actorColonyInhabitantNationality-${actorId}">
+                        <option value="espana">España</option>
+                        <option value="holanda">Holanda</option>
+                        <option value="francia">Francia</option>
+                        <option value="inglaterra">Inglaterra</option>
+                        <option value="curlandia">Curlandia</option>
+                    </select>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function updateActorMissionDetails(actorId) {
+            const missionType = document.getElementById(`actorMissionType-${actorId}`).value;
+            const detailsDiv = document.getElementById(`actorMissionDetails-${actorId}`);
+            
+            if (missionType === 'catedral') {
+                detailsDiv.innerHTML = `
+                    <label>Nacionalidad de la catedral</label>
+                    <select id="actorCathedralNationality-${actorId}">
+                        <option value="espana">España</option>
+                        <option value="holanda">Holanda</option>
+                        <option value="francia">Francia</option>
+                        <option value="inglaterra">Inglaterra</option>
+                        <option value="curlandia">Curlandia</option>
+                    </select>
+                    
+                    <label>Nacionalidad del ciudadano</label>
+                    <select id="actorCathedralCitizenNationality-${actorId}">
+                        <option value="espana">España</option>
+                        <option value="holanda">Holanda</option>
+                        <option value="francia">Francia</option>
+                        <option value="inglaterra">Inglaterra</option>
+                        <option value="curlandia">Curlandia</option>
+                    </select>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function calculateBattle() {
+            try {
+                const battle = gatherBattleData();
+                const validation = validateBattle(battle);
+                
+                if (!validation.valid) {
+                    showError(validation.message);
+                    return;
+                }
+                
+                const results = processBattle(battle);
+                displayResults(results);
+                
+            } catch (error) {
+                showError('Error al calcular la batalla: ' + error.message);
+            }
+        }
+
+        function gatherBattleData() {
+            return {
+                warTime: document.getElementById('warTime').value === 'true',
+                fleet: {
+                    ships: parseInt(document.getElementById('numShips').value),
+                    legality: document.getElementById('fleetLegality').value,
+                    nationality: document.getElementById('fleetNationality').value,
+                    cargo: {
+                        type: document.getElementById('cargoType').value,
+                        nationality: document.getElementById('citizenNation')?.value
+                    }
+                },
+                target: gatherTargetData(),
+                actors: gatherActorsData()
+            };
+        }
+
+        function gatherTargetData() {
+            const targetType = document.getElementById('targetType').value;
+            const target = { type: targetType };
+            
+            switch(targetType) {
+                case 'tribu':
+                    target.attackType = 'esclavizacion';
+                    target.force = 0;
+                    break;
+                    
+                case 'mision':
+                    const missionType = document.getElementById('missionType').value;
+                    target.missionType = missionType;
+                    
+                    if (missionType === 'parroquia') {
+                        target.attackType = 'esclavizacion';
+                        target.force = 0;
+                    } else {
+                        target.attackType = 'ataque';
+                        target.nationality = document.getElementById('cathedralNationality').value;
+                        target.citizenNationality = document.getElementById('cathedralCitizenNationality').value;
+                        target.force = target.nationality === 'francia' ? 1 : 0;
+                        target.citizenForce = 1;
+                    }
+                    break;
+                    
+                case 'colonia':
+                    target.attackType = 'ataque';
+                    target.nationality = document.getElementById('colonyNationality').value;
+                    target.fortified = document.getElementById('colonyFortified').value === 'true';
+                    target.inhabitantType = document.getElementById('colonyInhabitant').value;
+                    target.inhabitantNationality = document.getElementById('colonyInhabitantNationality')?.value;
+                    target.force = target.fortified ? 2 : 1;
+                    target.inhabitantForce = target.inhabitantType === 'ciudadano' ? 1 : 0;
+                    break;
+                    
+                case 'revuelta':
+                    target.attackType = 'ataque';
+                    target.revoltType = document.getElementById('revoltType').value;
+                    target.force = 1;
+                    break;
+            }
+            
+            return target;
+        }
+
+        function gatherActorsData() {
+            return actors.map(actor => {
+                const actorType = document.getElementById(`actorType-${actor.id}`).value;
+                const actorData = { id: actor.id, type: actorType };
+                
+                switch(actorType) {
+                    case 'colonia':
+                        actorData.nationality = document.getElementById(`actorColonyNationality-${actor.id}`).value;
+                        actorData.inhabitantType = document.getElementById(`actorColonyInhabitant-${actor.id}`).value;
+                        actorData.inhabitantNationality = document.getElementById(`actorColonyInhabitantNationality-${actor.id}`)?.value;
+                        break;
+                        
+                    case 'revuelta':
+                        actorData.revoltType = document.getElementById(`actorRevoltType-${actor.id}`).value;
+                        break;
+                        
+                    case 'mision':
+                        actorData.missionType = document.getElementById(`actorMissionType-${actor.id}`).value;
+                        if (actorData.missionType === 'catedral') {
+                            actorData.nationality = document.getElementById(`actorCathedralNationality-${actor.id}`).value;
+                            actorData.citizenNationality = document.getElementById(`actorCathedralCitizenNationality-${actor.id}`).value;
+                        }
+                        break;
+                }
+                
+                return actorData;
+            });
+        }
+
+        function validateBattle(battle) {
+            // Validar carga ciudadana
+            if (battle.fleet.cargo.type === 'ciudadano' && 
+                battle.fleet.cargo.nationality !== battle.fleet.nationality) {
+                return { valid: false, message: 'El ciudadano debe ser de la misma nacionalidad que la flota' };
+            }
+            
+            // Validar ataque según legalidad
+            const canAttack = validateAttackPermission(battle);
+            if (!canAttack.valid) {
+                return canAttack;
+            }
+            
+            // Validar ataques prohibidos por nacionalidad
+            if (battle.target.type === 'colonia' && 
+                battle.target.inhabitantType === 'ciudadano' &&
+                battle.target.inhabitantNationality === battle.fleet.nationality) {
+                return { valid: false, message: 'No se puede atacar una colonia con ciudadano de la misma nacionalidad' };
+            }
+            
+            if (battle.target.type === 'mision' && battle.target.missionType === 'catedral' &&
+                battle.target.nationality === battle.fleet.nationality) {
+                return { valid: false, message: 'No se puede atacar una catedral de la misma nacionalidad' };
+            }
+            
+            return { valid: true };
+        }
+
+        function validateAttackPermission(battle) {
+            const legality = battle.fleet.legality;
+            const attackType = battle.target.attackType;
+            const warTime = battle.warTime;
+            
+            switch(legality) {
+                case 'saqueador':
+                    return { valid: true };
+                    
+                case 'contrabandista':
+                    if (attackType !== 'esclavizacion') {
+                        return { valid: false, message: 'Los contrabandistas solo pueden realizar esclavización' };
+                    }
+                    return { valid: true };
+                    
+                case 'conquistador':
+                    if (battle.target.type === 'revuelta') {
+                        return { valid: false, message: 'Los conquistadores no pueden atacar revueltas' };
+                    }
+                    return { valid: true };
+                    
+                case 'corsario':
+                    if (attackType === 'ataque' && !warTime) {
+                        return { valid: false, message: 'Los corsarios solo pueden atacar en tiempo de guerra' };
+                    }
+                    return { valid: true };
+            }
+            
+            return { valid: true };
+        }
+
+        function processBattle(battle) {
+            let attackerForce = parseInt(battle.fleet.ships);
+            let defenderForce = battle.target.force;
+            
+            // Añadir fuerza del ciudadano del objetivo si aplica
+            if (battle.target.citizenForce) {
+                defenderForce += battle.target.citizenForce;
+            }
+            
+            if (battle.target.inhabitantForce) {
+                defenderForce += battle.target.inhabitantForce;
+            }
+            
+            let pendingDecisions = [];
+            let actorContributions = [];
+            
+            // Procesar actores
+            battle.actors.forEach(actor => {
+                const contribution = processActor(actor, battle);
+                actorContributions.push(contribution);
+                
+                if (contribution.needsDecision) {
+                    pendingDecisions.push(contribution);
+                } else {
+                    if (contribution.side === 'attacker') {
+                        attackerForce += contribution.force;
+                    } else {
+                        defenderForce += contribution.force;
+                    }
+                }
+            });
+            
+            return {
+                battle,
+                attackerForce,
+                defenderForce,
+                pendingDecisions,
+                actorContributions,
+                finalResult: pendingDecisions.length === 0 ? calculateFinalResult(attackerForce, defenderForce) : null
+            };
+        }
+        
+        function processActor(actor, battle) {
+            const fleetNationality = battle.fleet.nationality;
+            const targetNationality = battle.target.nationality;
+            
+            switch(actor.type) {
+                case 'colonia':
+                    if (actor.nationality === targetNationality) {
+                        // Apoya al objetivo
+                        let force = 1;
+                        if (actor.inhabitantType === 'ciudadano' && actor.inhabitantNationality !== targetNationality) {
+                            // Ciudadano de tercer país - necesita decisión
+                            return {
+                                id: actor.id,
+                                type: 'colonia',
+                                description: `Colonia ${nationalities[actor.nationality].name} con ciudadano ${nationalities[actor.inhabitantNationality].name}`,
+                                force: force + 1,
+                                needsDecision: true,
+                                side: null
+                            };
+                        }
+                        return {
+                            id: actor.id,
+                            type: 'colonia',
+                            description: `Colonia ${nationalities[actor.nationality].name}`,
+                            force: force,
+                            needsDecision: false,
+                            side: 'defender'
+                        };
+                    } else if (actor.nationality === fleetNationality) {
+                        // Apoya al atacante
+                        return {
+                            id: actor.id,
+                            type: 'colonia',
+                            description: `Colonia ${nationalities[actor.nationality].name}`,
+                            force: 1,
+                            needsDecision: false,
+                            side: 'attacker'
+                        };
+                    } else {
+                        // Tercer país - necesita decisión
+                        let force = 1;
+                        if (actor.inhabitantType === 'ciudadano') {
+                            force += 1;
+                        }
+                        return {
+                            id: actor.id,
+                            type: 'colonia',
+                            description: `Colonia ${nationalities[actor.nationality].name}`,
+                            force: force,
+                            needsDecision: true,
+                            side: null
+                        };
+                    }
+                    
+                case 'revuelta':
+                    // Las revueltas siempre apoyan al atacante (excepto si son el objetivo)
+                    return {
+                        id: actor.id,
+                        type: 'revuelta',
+                        description: `Revuelta ${actor.revoltType}`,
+                        force: 1,
+                        needsDecision: false,
+                        side: 'attacker'
+                    };
+                    
+                case 'mision':
+                    if (actor.missionType === 'parroquia') {
+                        // Las parroquias no aportan fuerza
+                        return {
+                            id: actor.id,
+                            type: 'mision',
+                            description: 'Parroquia',
+                            force: 0,
+                            needsDecision: false,
+                            side: 'neutral'
+                        };
+                    } else {
+                        // Catedral
+                        let force = actor.nationality === 'francia' ? 1 : 0;
+                        if (actor.citizenNationality !== actor.nationality) {
+                            force += 1; // Ciudadano aporta fuerza
+                            
+                            // Si el ciudadano es de tercer país, necesita decisión
+                            if (actor.citizenNationality !== fleetNationality && actor.citizenNationality !== targetNationality) {
+                                return {
+                                    id: actor.id,
+                                    type: 'mision',
+                                    description: `Catedral ${nationalities[actor.nationality].name} con ciudadano ${nationalities[actor.citizenNationality].name}`,
+                                    force: force,
+                                    needsDecision: true,
+                                    side: null
+                                };
+                            }
+                        }
+                        
+                        return {
+                            id: actor.id,
+                            type: 'mision',
+                            description: `Catedral ${nationalities[actor.nationality].name}`,
+                            force: force,
+                            needsDecision: false,
+                            side: 'defender'
+                        };
+                    }
+            }
+        }
+        
+        function calculateFinalResult(attackerForce, defenderForce) {
+            if (attackerForce > defenderForce) {
+                return {
+                    winner: 'attacker',
+                    message: '¡Victoria del atacante!',
+                    margin: attackerForce - defenderForce
+                };
+            } else if (defenderForce > attackerForce) {
+                return {
+                    winner: 'defender',
+                    message: '¡Victoria del defensor!',
+                    margin: defenderForce - attackerForce
+                };
+            } else {
+                return {
+                    winner: 'tie',
+                    message: 'Empate - No hay vencedor',
+                    margin: 0
+                };
+            }
+        }
+        
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            const battleResultsDiv = document.getElementById('battleResults');
+            
+            let html = `
+                <div class="force-display">
+                    <div class="force-attacker">
+                        🗡️ Fuerza Atacante: ${results.attackerForce}
+                    </div>
+                    <div class="force-defender">
+                        🛡️ Fuerza Defensor: ${results.defenderForce}
+                    </div>
+                </div>
+                
+                <h3>Contribuciones de Actores:</h3>
+            `;
+            
+            results.actorContributions.forEach(contribution => {
+                const sideText = contribution.side === 'attacker' ? '🗡️ Atacante' : 
+                                contribution.side === 'defender' ? '🛡️ Defensor' : 
+                                contribution.side === 'neutral' ? '⚪ Neutral' : '❓ Pendiente';
+                
+                html += `
+                    <div class="actor-card">
+                        <strong>${contribution.description}</strong><br>
+                        Fuerza: ${contribution.force} | Lado: ${sideText}
+                        ${contribution.needsDecision ? `
+                            <div class="decision-buttons">
+                                <button onclick="makeDecision('${contribution.id}', 'attacker')" class="force-attacker">
+                                    Apoyar Atacante (+${contribution.force})
+                                </button>
+                                <button onclick="makeDecision('${contribution.id}', 'defender')" class="force-defender">
+                                    Apoyar Defensor (+${contribution.force})
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            if (results.pendingDecisions.length > 0) {
+                html += `
+                    <div class="warning">
+                        <strong>⚠️ Hay ${results.pendingDecisions.length} decisiones pendientes</strong><br>
+                        Los jugadores deben decidir qué lado apoyar antes de obtener el resultado final.
+                    </div>
+                `;
+            } else if (results.finalResult) {
+                html += `
+                    <div class="success">
+                        <h3>🏆 Resultado Final</h3>
+                        <p><strong>${results.finalResult.message}</strong></p>
+                        <p>Margen de victoria: ${results.finalResult.margin}</p>
+                    </div>
+                `;
+            }
+            
+            battleResultsDiv.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
+            
+            // Guardar estado para las decisiones
+            battleState = results;
+        }
+        
+        function makeDecision(actorId, side) {
+            const contribution = battleState.actorContributions.find(c => c.id === actorId);
+            if (!contribution) return;
+            
+            contribution.side = side;
+            contribution.needsDecision = false;
+            
+            // Recalcular fuerzas
+            let attackerForce = battleState.attackerForce;
+            let defenderForce = battleState.defenderForce;
+            
+            battleState.pendingDecisions = battleState.pendingDecisions.filter(d => d.id !== actorId);
+            
+            if (side === 'attacker') {
+                attackerForce += contribution.force;
+            } else {
+                defenderForce += contribution.force;
+            }
+            
+            battleState.attackerForce = attackerForce;
+            battleState.defenderForce = defenderForce;
+            
+            // Si no hay más decisiones pendientes, calcular resultado final
+            if (battleState.pendingDecisions.length === 0) {
+                battleState.finalResult = calculateFinalResult(attackerForce, defenderForce);
+            }
+            
+            // Actualizar display
+            displayResults(battleState);
+        }
+        
+        function showError(message) {
+            const resultsDiv = document.getElementById('results');
+            const battleResultsDiv = document.getElementById('battleResults');
+            
+            battleResultsDiv.innerHTML = `<div class="error">${message}</div>`;
+            resultsDiv.classList.remove('hidden');
+        }
+        
+        // Inicializar la aplicación
+        updateTargetDetails();
+    </script>
+</body>
+</html>
