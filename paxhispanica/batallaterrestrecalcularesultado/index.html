@@ -863,7 +863,8 @@
                         fuerzaEspacio = space.fuerzaDefensiva;
                         descripcionEspacio = `Parroquia ${paisEspacio}`;
                     } else if (space.tipo === 'catedral') {
-                        fuerzaEspacio = space.fuerzaDefensiva - (space.habitante === 'expatriado' ? space.fuerzaExpatriado : 0);
+                        //fuerzaEspacio = space.fuerzaDefensiva - (space.habitante === 'expatriado' ? space.fuerzaExpatriado : 0);
+                        fuerzaEspacio = space.fuerzaDefensiva;
                         descripcionEspacio = `Catedral ${paisEspacio}`;
                         
                         if (space.habitante === 'ciudadano') {
