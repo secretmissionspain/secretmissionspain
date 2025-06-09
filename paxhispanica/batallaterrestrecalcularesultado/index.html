@@ -837,6 +837,10 @@
                 if (space.tipo === 'revuelta') {
                     if (space.esObjetivo) {
                         // La revuelta es objetivo, apoya a la defensa
+                        resultado.fuerzasObjetivo.revueltas.push({
+                            descripcion: `Revuelta de ${space.tipoRevuelta}`,
+                            fuerza: space.fuerza
+                        });
                         resultado.totalObjetivo += space.fuerza;
                     } else {
                         // Las revueltas que NO son objetivo apoyan a la flota
