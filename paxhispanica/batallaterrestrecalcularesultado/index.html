@@ -848,11 +848,8 @@
 
                     if (space.tipo === 'colonia') {
                         if (space.esObjetivo) {
-                            fuerzaEspacio = space.fuerzaDefensiva - (space.habitante === 'expatriado' ? space.fuerzaExpatriado : 0);
-                                    // Sumar 1 si está fortificada
-                            if (space.fortificada) {
-                                fuerzaEspacio += 1;
-                            }
+                            //fuerzaEspacio = space.fuerzaDefensiva - (space.habitante === 'expatriado' ? space.fuerzaExpatriado : 0);
+                            fuerzaEspacio = space.fuerzaDefensiva;
                             // Añadir "fortificada" a la descripción si corresponde
                             descripcionEspacio = space.fortificada ? `Colonia fortificada ${paisEspacio} (objetivo)` : `Colonia ${paisEspacio} (objetivo)`;
                             //descripcionEspacio = `Colonia ${paisEspacio} (objetivo)`;
