@@ -1001,6 +1001,31 @@
             const container = document.getElementById('battle-result-content');
             let html = '';
 
+            
+            html += `
+                <div class="result-section">
+                    <button onclick="toggleDatosBatalla()" 
+                            style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                        <span id="toggle-text">Mostrar Datos de la Batalla</span>
+                    </button>
+                    <div id="datos-batalla-content" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; overflow-x: auto; margin-top: 10px;">
+                        <pre>` + JSON.stringify(data, null, 2) + `</pre>
+                    </div>
+                </div>
+                <script>
+                    function toggleDatosBatalla() {
+                        const content = document.getElementById('datos-batalla-content');
+                        const text = document.getElementById('toggle-text');
+                        if (content.style.display === 'none') {
+                            content.style.display = 'block';
+                            text.textContent = 'Ocultar Datos de la Batalla';
+                        } else {
+                            content.style.display = 'none';
+                            text.textContent = 'Mostrar Datos de la Batalla';
+                        }
+                    }
+                </script>
+            `;
 
 
             // Mostrar decisiones pendientes si las hay
