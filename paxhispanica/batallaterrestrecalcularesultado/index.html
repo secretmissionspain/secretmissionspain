@@ -1002,19 +1002,7 @@
             let html = '';   
 
 
-            const jsonData = JSON.stringify(data, null, 2);
-            html += `
-                <div class="result-section">
-                    <details>
-                        <summary style="cursor: pointer; font-size: 1.17em; font-weight: bold; margin-bottom: 10px;">
-                            Datos de la Batalla
-                        </summary>
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; overflow-x: auto;">
-                            <pre>${jsonData}</pre>
-                        </div>
-                    </details>
-                </div>
-            `;
+            html += <div class="result-section"> <h3>Datos de la Batalla</h3> <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; overflow-x: auto;"> <pre>${JSON.stringify(data, null, 2)}</pre> </div> </div> ;
 
             
             // Mostrar decisiones pendientes si las hay
