@@ -831,13 +831,21 @@
             data.espacios.forEach(space => {
                 if (space.tipo === 'flota') return;
 
+
+
+
                 if (space.tipo === 'revuelta') {
-                    // Las revueltas siempre apoyan a la flota
-                    resultado.fuerzasFlota.revueltas.push({
-                        descripcion: `Revuelta de ${space.tipoRevuelta}`,
-                        fuerza: space.fuerza
-                    });
-                    resultado.totalFlota += space.fuerza;
+                    if (space.esObjetivo) {
+                        // La revuelta es objetivo, apoya a la defensa
+                        resultado.totalObjetivo += space.fuerza;
+                    } else {
+                        // Las revueltas que NO son objetivo apoyan a la flota
+                        resultado.fuerzasFlota.revueltas.push({
+                            descripcion: `Revuelta de ${space.tipoRevuelta}`,
+                            fuerza: space.fuerza
+                        });
+                        resultado.totalFlota += space.fuerza;
+                    }
                 } else {
                     // Separar fuerza del espacio y del expatriado
                     const paisEspacio = space.pais;
