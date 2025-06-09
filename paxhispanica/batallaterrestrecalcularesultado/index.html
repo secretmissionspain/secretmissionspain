@@ -1005,15 +1005,23 @@
 
             html += `
                 <div class="result-section">
-                    <details>
-                        <summary style="cursor: pointer; font-size: 1.17em; font-weight: bold; margin-bottom: 10px;">
-                            Datos de la Batalla
+                    <details style="border: none;">
+                        <summary style="cursor: pointer; font-size: 1.17em; font-weight: bold; margin-bottom: 10px; list-style: none; outline: none;">
+                            ▶ Datos de la Batalla
                         </summary>
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; overflow-x: auto;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; overflow-x: auto; margin-top: 10px;">
                             <pre>${JSON.stringify(data, null, 2)}</pre>
                         </div>
                     </details>
                 </div>
+                <style>
+                    details[open] summary::before {
+                        content: "▼ ";
+                    }
+                    details summary::before {
+                        content: "▶ ";
+                    }
+                </style>
             `;
             
                         
