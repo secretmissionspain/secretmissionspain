@@ -1000,6 +1000,22 @@
         function displayBattleResult(resultado, data) {
             const container = document.getElementById('battle-result-content');
             let html = '';   
+
+
+            const jsonData = JSON.stringify(data, null, 2);
+            html += `
+                <div class="result-section">
+                    <details>
+                        <summary style="cursor: pointer; font-size: 1.17em; font-weight: bold; margin-bottom: 10px;">
+                            Datos de la Batalla
+                        </summary>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; overflow-x: auto;">
+                            <pre>${jsonData}</pre>
+                        </div>
+                    </details>
+                </div>
+            `;
+
             
             // Mostrar decisiones pendientes si las hay
             if (resultado.decisiones.length > 0) {
