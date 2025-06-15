@@ -488,11 +488,12 @@
             </div>
         </div>
 
+
         <div class="actions">
             <button class="back-button" onclick="goBack()">
                 ← Volver al Inicio
             </button>
-
+            
             <form class="selection-form" id="characterForm">
                 <div class="form-group">
                     <label for="reason">¿Pon tu nombre y el motivo que eliges este personaje?</label>
@@ -567,8 +568,8 @@
 
         // Funciones de navegación y formulario
         function goBack() {
-            // Aquí pondrás tu enlace definitivo
-            window.location.href = 'https://tu-pagina-inicio.com';
+            // Navegar al directorio anterior
+            window.history.back();
         }
 
         // Manejo del formulario
