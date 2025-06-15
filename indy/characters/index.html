@@ -1,1 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura Arqueológica - Años 30</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Special Elite', cursive;
+            background: linear-gradient(135deg, #8b4513 0%, #d2b48c  50%, #daa520 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Efectos de papel vintage */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(210, 180, 140, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(245, 245, 220, 0.95);
+            border: 4px solid #8b4513;
+            border-radius: 15px;
+            box-shadow: 
+                0 0 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(139, 69, 19, 0.1);
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #8b4513, #cd853f, #8b4513);
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            border-radius: 15px 15px 0 0;
+            color: #f5f5dc;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        .hat-image {
+            width: 100px;
+            height: auto;
+            margin: 20px auto 10px;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .hat-image:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .header::after {
+            content: '⚱️ 🗿 ⚱️';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f5dc;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #2f1b14;
+        }
+
+        #typewriter-text {
+            min-height: 200px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .cursor {
+            display: inline-block;
+            background-color: #8b4513;
+            width: 3px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .characters-section {
+            margin-top: 40px;
+        }
+
+        .characters-title {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #8b4513;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .character-card {
+            background: linear-gradient(135deg, #f4e4bc 0%, #e6d3a3 100%);
+            border: 3px solid #8b4513;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .character-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .character-card:hover::before {
+            opacity: 1;
+            animation: shine 0.8s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: #cd853f;
+        }
+
+        .character-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .character-name {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            color: #8b4513;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .character-role {
+            font-style: italic;
+            color: #654321;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .decorative-elements {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0.6;
+            color: #8b4513;
+            pointer-events: none;
+        }
+
+        .element-1 { top: 20%; left: 5%; animation: float 6s ease-in-out infinite; }
+        .element-2 { top: 60%; right: 8%; animation: float 8s ease-in-out infinite reverse; }
+        .element-3 { bottom: 20%; left: 10%; animation: float 7s ease-in-out infinite; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-width: 2px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px 15px;
+                font-size: 1em;
+            }
+            
+            .characters-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .character-card {
+                padding: 15px;
+            }
+            
+            .decorative-elements {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
+            .content {
+                padding: 15px 10px;
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-elements element-1">🏺</div>
+    <div class="decorative-elements element-2">🗿</div>
+    <div class="decorative-elements element-3">⚱️</div>
+
+    <div class="container">
+        <div class="header">
+            <img src="./sombrero.png" alt="" class="hat-image">
+            <h1>Aventura Arqueológica</h1>
+            <div class="subtitle">Una expedición en los años 30</div>
+        </div>
+        
+        <div class="content">
+            <div id="typewriter-text"></div>
+            
+            <div class="characters-section">
+                <h2 class="characters-title">Elige tu Aventurero</h2>
+                <div class="characters-grid">
+                    <div class="character-card">
+                        <a href="./lauravidal/">
+                            <div class="character-name">Dra. Laura Vidal</div>
+                            <div class="character-role">Ingeniera de Estructuras Antiguas</div>
+                        </a>
+                    </div>
+                    
+                    <div class="character-card">
+                        <a href="./clarabeaumont/">
+                            <div class="character-name">Clara Beaumont</div>
+                            <div class="character-role">Periodista y Fotógrafa</div>
+                        </a>
+                    </div>
+                    
+                    <div class="character-card">
+                        <a href="./kaihuang/">
+                            <div class="character-name">Kai Huang</div>
+                            <div class="character-role">12 años, aventurero</div>
+                        </a>
+                    </div>
+                    
+                    <div class="character-card">
+                        <a href="./enriqueavila/">
+                            <div class="character-name">Dr. Enrique Ávila</div>
+                            <div class="character-role">Historiador y Criptólogo</div>
+                        </a>
+                    </div>
+                    
+                    <div class="character-card">
+                        <a href="./jackomalley/">
+                            <div class="character-name">Jack O'Malley</div>
+                            <div class="character-role">Explorador y Guía</div>
+                        </a>
+                    </div>
+                    
+                    <div class="character-card">
+                        <a href="./helenaward/">
+                            <div class="character-name">Dra. Helena Ward</div>
+                            <div class="character-role">Arqueóloga y Lingüista</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const text = `Bienvenidos, intrépidos exploradores. Corría el año 1935, cuando la arqueología era sinónimo de peligro y gloria. Vuestro destino os aguarda: desentrañar secretos milenarios que sacudirán los cimientos de la historia conocida.
+
+Todos habéis cruzado caminos con el legendario Doctor Jones en algún momento, pero el destino es caprichoso. Mientras él surca tierras lejanas persiguiendo otra reliquia perdida, la fortuna ha puesto en vuestras manos una oportunidad única.
+
+El sendero que os espera está plagado de enigmas ancestrales y desafíos inesperados. Tal vez os toque enfrentar guardianes olvidados o negociar con tribus que protegen celosamente sus secretos. El peligro y la gloria son compañeros inseparables en esta noble profesión.
+
+Antes de adentraros en lo desconocido, debéis revelar vuestra identidad. Cada especialidad será crucial para el éxito del grupo. Elegid sabiamente, pues de ello depende el triunfo de la expedición.`;
+
+        let i = 0;
+        const typewriterElement = document.getElementById('typewriter-text');
+        const cursor = '<span class="cursor">|</span>';
+        
+        function typeWriter() {
+            if (i < text.length) {
+                let char = text.charAt(i);
+                if (char === '\n') {
+                    typewriterElement.innerHTML += '<br><br>';
+                } else {
+                    typewriterElement.innerHTML += char;
+                }
+                i++;
+                
+                // Velocidad variable para hacer más realista
+                let speed = Math.random() * 100 + 50;
+                if (char === '.' || char === ',' || char === ';') {
+                    speed += 300; // Pausa más larga después de puntuación
+                }
+                
+                setTimeout(typeWriter, speed);
+            } else {
+                // Añadir cursor parpadeante al final
+                typewriterElement.innerHTML += cursor;
+                
+                // Remover cursor después de 3 segundos
+                setTimeout(() => {
+                    typewriterElement.innerHTML = typewriterElement.innerHTML.replace(cursor, '');
+                }, 3000);
+            }
+        }
+
+        // Iniciar el efecto de máquina de escribir cuando la página carga
+        window.addEventListener('load', () => {
+            setTimeout(typeWriter, 500);
+        });
+
+        // Efectos de sonido simulados (visual feedback)
+        document.querySelectorAll('.character-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.filter = 'sepia(20%)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.filter = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
