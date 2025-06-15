@@ -290,7 +290,7 @@
 
     <div class="container">
         <div class="header">
-            <img src="./sombrero.png" alt="" class="hat-image">
+            <img src="sombrero.png" alt="" class="hat-image">
             <h1>Aventura Arqueológica</h1>
             <div class="subtitle">Una expedición en los años 30</div>
         </div>
@@ -302,42 +302,42 @@
                 <h2 class="characters-title">Elige tu Aventurero</h2>
                 <div class="characters-grid">
                     <div class="character-card">
-                        <a href="./lauravidal/">
+                        <a href="lauravidal.html">
                             <div class="character-name">Dra. Laura Vidal</div>
                             <div class="character-role">Ingeniera de Estructuras Antiguas</div>
                         </a>
                     </div>
                     
                     <div class="character-card">
-                        <a href="./clarabeaumont/">
+                        <a href="clarabeaumont.html">
                             <div class="character-name">Clara Beaumont</div>
                             <div class="character-role">Periodista y Fotógrafa</div>
                         </a>
                     </div>
                     
                     <div class="character-card">
-                        <a href="./kaihuang/">
+                        <a href="kaihuang.html">
                             <div class="character-name">Kai Huang</div>
                             <div class="character-role">12 años, aventurero</div>
                         </a>
                     </div>
                     
                     <div class="character-card">
-                        <a href="./enriqueavila/">
+                        <a href="enriqueavila.html">
                             <div class="character-name">Dr. Enrique Ávila</div>
                             <div class="character-role">Historiador y Criptólogo</div>
                         </a>
                     </div>
                     
                     <div class="character-card">
-                        <a href="./jackomalley/">
+                        <a href="jackomalley.html">
                             <div class="character-name">Jack O'Malley</div>
                             <div class="character-role">Explorador y Guía</div>
                         </a>
                     </div>
                     
                     <div class="character-card">
-                        <a href="./helenaward/">
+                        <a href="helenaward.html">
                             <div class="character-name">Dra. Helena Ward</div>
                             <div class="character-role">Arqueóloga y Lingüista</div>
                         </a>
@@ -371,9 +371,9 @@ Antes de adentraros en lo desconocido, debéis revelar vuestra identidad. Cada e
                 i++;
                 
                 // Velocidad variable para hacer más realista
-                let speed = Math.random() * 100 + 50;
+                let speed = Math.random() * 50 + 50;
                 if (char === '.' || char === ',' || char === ';') {
-                    speed += 300; // Pausa más larga después de puntuación
+                    speed += 30; // Pausa más larga después de puntuación
                 }
                 
                 setTimeout(typeWriter, speed);
