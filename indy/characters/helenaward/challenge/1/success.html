@@ -188,7 +188,7 @@
             padding: 10px;
             border-radius: 50px;
             z-index: 1000;
-            display: none; /* Oculto inicialmente */
+            display: none;
         }
 
         .access-screen {
@@ -288,6 +288,19 @@
 
         .audio-toggle:hover {
             background: rgba(255,255,255,0.2);
+        }
+
+        .audio-status {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(139, 69, 19, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
         }
 
         /* Media Queries para dispositivos móviles */
@@ -394,8 +407,11 @@
         <button class="audio-toggle" onclick="toggleAudio()" id="audioToggle">🔊</button>
     </div>
 
-    <!-- Audio de fondo (aquí añadirás tu música) -->
-    <audio id="backgroundMusic" loop>
+    <!-- Status del audio -->
+    <div class="audio-status" id="audioStatus">Música activada</div>
+
+    <!-- Audio de fondo -->
+    <audio id="backgroundMusic" loop preload="auto">
         <source src="victory-music.mp3" type="audio/mpeg">
         <source src="victory-music.ogg" type="audio/ogg">
         Tu navegador no soporta el elemento de audio.
@@ -455,8 +471,15 @@
         let audioPlaying = false;
         const audio = document.getElementById('backgroundMusic');
         const audioToggle = document.getElementById('audioToggle');
+        const audioStatus = document.getElementById('audioStatus');
+
+        // Precargar el audio
+        audio.load();
 
         function revelarMisterio() {
+            // Intentar reproducir audio inmediatamente tras la interacción del usuario
+            reproducirAudio();
+            
             // Ocultar pantalla de acceso con efecto
             const accessScreen = document.getElementById('accessScreen');
             accessScreen.style.opacity = '0';
@@ -482,18 +505,34 @@
                     successContent.style.transform = 'translateY(0)';
                 }, 100);
                 
-                // Reproducir música automáticamente
-                setTimeout(() => {
-                    audio.play().then(() => {
-                        audioPlaying = true;
-                        audioToggle.textContent = '🔊';
-                    }).catch(e => {
-                        console.log('Error al reproducir audio:', e);
-                        audioToggle.textContent = '🔇';
-                    });
-                }, 500);
-                
             }, 800);
+        }
+
+        function reproducirAudio() {
+            // Resetear el audio al inicio
+            audio.currentTime = 0;
+            
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Audio reproducido correctamente');
+                    audioPlaying = true;
+                    audioToggle.textContent = '🔊';
+                    mostrarEstadoAudio('Música activada', '#4CAF50');
+                }).catch(error => {
+                    console.log('Error al reproducir audio:', error);
+                    audioPlaying = false;
+                    audioToggle.textContent = '🔇';
+                    mostrarEstadoAudio('Error al reproducir música', '#f44336');
+                    
+                    // Intentar reproducir sin sonido y luego reactivar
+                    audio.muted = true;
+                    audio.play().then(() => {
+                        audio.muted = false;
+                    });
+                });
+            }
         }
 
         function toggleAudio() {
@@ -501,13 +540,20 @@
                 audio.pause();
                 audioToggle.textContent = '🔇';
                 audioPlaying = false;
+                mostrarEstadoAudio('Música pausada', '#ff9800');
             } else {
-                audio.play().catch(e => {
-                    console.log('Error al reproducir audio:', e);
-                });
-                audioToggle.textContent = '🔊';
-                audioPlaying = true;
+                reproducirAudio();
             }
+        }
+
+        function mostrarEstadoAudio(mensaje, color) {
+            audioStatus.textContent = mensaje;
+            audioStatus.style.backgroundColor = color;
+            audioStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                audioStatus.style.display = 'none';
+            }, 3000);
         }
 
         // Función para reemplazar el placeholder con una imagen QR real
@@ -515,6 +561,13 @@
             const qrPlaceholder = document.getElementById('qrPlaceholder');
             qrPlaceholder.innerHTML = `<img src="${imagePath}" alt="Código QR" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;">`;
         }
+
+        // Manejar eventos de audio para debugging
+        audio.addEventListener('loadstart', () => console.log('Audio: Carga iniciada'));
+        audio.addEventListener('canplay', () => console.log('Audio: Listo para reproducir'));
+        audio.addEventListener('error', (e) => console.log('Audio error:', e));
+        audio.addEventListener('play', () => console.log('Audio: Reproduciendo'));
+        audio.addEventListener('pause', () => console.log('Audio: Pausado'));
 
         // Ejemplo de cómo usar la función (descomenta y ajusta la ruta cuando tengas la imagen):
         // setQRImage('qr-code.png');
