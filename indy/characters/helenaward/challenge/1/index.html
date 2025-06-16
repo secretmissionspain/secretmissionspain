@@ -524,8 +524,8 @@
             })
             .then(response => {
                 if (response.ok) {
-                    mostrarMensaje('¡Respuestas enviadas correctamente! Gracias por su participación.', 'exito');
-                    this.reset();
+                    / Redirigir a la página de éxito
+                    window.location.href = 'success.html';
                 } else {
                     mostrarMensaje('Error al enviar las respuestas. Por favor, inténtelo de nuevo.', 'error');
                 }
