@@ -547,74 +547,8 @@
             }
             
             if (correct) {
-                // Crear la página success.html dinámicamente
-                const successContent = `
-                    <!DOCTYPE html>
-                    <html lang="es">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>¡Éxito! - Investigación Completada</title>
-                        <style>
-                            body {
-                                background: linear-gradient(135deg, #8B4513 0%, #D2B48C 50%, #F5DEB3 100%);
-                                font-family: 'Courier New', monospace;
-                                min-height: 100vh;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                padding: 20px;
-                            }
-                            .success-container {
-                                background: #F5F5DC;
-                                padding: 50px;
-                                border-radius: 15px;
-                                box-shadow: 0 0 30px rgba(0,0,0,0.3);
-                                text-align: center;
-                                border: 3px solid #8B4513;
-                                max-width: 600px;
-                            }
-                            h1 {
-                                color: #8B4513;
-                                font-size: 32px;
-                                margin-bottom: 30px;
-                            }
-                            p {
-                                color: #2F1B14;
-                                font-size: 18px;
-                                line-height: 1.6;
-                                margin-bottom: 20px;
-                            }
-                            .signature {
-                                margin-top: 40px;
-                                font-style: italic;
-                                color: #654321;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="success-container">
-                            <h1>🎉 ¡INVESTIGACIÓN COMPLETADA! 🎉</h1>
-                            <p>¡Excelente trabajo, estimado colega!</p>
-                            <p>Ha identificado correctamente a los tres grandes arqueólogos:</p>
-                            <p><strong>Howard Carter</strong> - Descubridor de la tumba de Tutankamón</p>
-                            <p><strong>Hiram Bingham</strong> - Redescubridor de Machu Picchu</p>
-                            <p><strong>Heinrich Schliemann</strong> - Excavador de Troya</p>
-                            <p>Su conocimiento en arqueología es verdaderamente admirable.</p>
-                            <div class="signature">
-                                Con mis felicitaciones,<br>
-                                Clara Beamount
-                            </div>
-                        </div>
-                    </body>
-                    </html>
-                `;
-                
-                // Abrir nueva ventana con el contenido de éxito
-                const newWindow = window.open('', '_blank');
-                newWindow.document.write(successContent);
-                newWindow.document.close();
-                
+                // Redirigir a la página de éxito
+                window.location.href = 'success.html';
             } else {
                 const errorMsg = document.getElementById('error-message');
                 if (errorNames.length === 1) {
