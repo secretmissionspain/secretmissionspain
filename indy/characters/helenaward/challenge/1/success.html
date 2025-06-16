@@ -556,9 +556,9 @@
         }
 
         // Función para reemplazar el placeholder con una imagen QR real
-        function setQRImage(imagePath) {
+        function setQRImage('qr-code.png') {
             const qrPlaceholder = document.getElementById('qrPlaceholder');
-            qrPlaceholder.innerHTML = `<img src="qr.png" alt="Código QR" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;">`;
+            qrPlaceholder.innerHTML = `<img src="${imagePath}" alt="Código QR" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;">`;
         }
 
         // Manejar eventos de audio para debugging
