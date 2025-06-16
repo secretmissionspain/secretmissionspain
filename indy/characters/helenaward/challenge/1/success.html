@@ -188,6 +188,91 @@
             padding: 10px;
             border-radius: 50px;
             z-index: 1000;
+            display: none; /* Oculto inicialmente */
+        }
+
+        .access-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8B4513, #A0522D, #CD853F);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.3) 0%, transparent 50%);
+        }
+
+        .access-container {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mystery-icon {
+            font-size: 120px;
+            margin-bottom: 40px;
+            animation: mysteryPulse 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes mysteryPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .access-button {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #8B4513;
+            font-family: 'Courier Prime', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 20px 40px;
+            border: 4px solid #8B4513;
+            border-radius: 15px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes buttonGlow {
+            from { 
+                box-shadow: 
+                    0 8px 25px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            }
+            to { 
+                box-shadow: 
+                    0 8px 25px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                    0 0 30px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        .access-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 12px 35px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 215, 0, 0.8);
+        }
+
+        .access-button:active {
+            transform: translateY(-1px) scale(1.02);
         }
 
         .audio-toggle {
@@ -277,10 +362,28 @@
                 font-size: 16px;
             }
 
-            .audio-controls {
-                top: 10px;
-                right: 10px;
-                padding: 8px;
+            .access-button {
+                font-size: 16px;
+                padding: 18px 30px;
+                letter-spacing: 1px;
+            }
+
+            .mystery-icon {
+                font-size: 90px;
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .access-button {
+                font-size: 14px;
+                padding: 15px 25px;
+                letter-spacing: 1px;
+            }
+
+            .mystery-icon {
+                font-size: 70px;
+                margin-bottom: 25px;
             }
         }
     </style>
@@ -293,12 +396,23 @@
 
     <!-- Audio de fondo (aquí añadirás tu música) -->
     <audio id="backgroundMusic" loop>
-        <source src="../../../../indiana-jones-theme-song.mp3" type="audio/mpeg">
+        <source src="victory-music.mp3" type="audio/mpeg">
         <source src="victory-music.ogg" type="audio/ogg">
         Tu navegador no soporta el elemento de audio.
     </audio>
 
-    <div class="success-container">
+    <!-- Pantalla inicial con botón -->
+    <div class="access-screen" id="accessScreen">
+        <div class="access-container">
+            <div class="mystery-icon">🔍</div>
+            <button class="access-button" onclick="revelarMisterio()">
+                PRESIONA PARA ACCEDER AL MISTERIO
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal (oculto inicialmente) -->
+    <div class="success-container" id="successContent" style="display: none;">
         <div class="congratulations">
             🏆 ¡MISIÓN COMPLETADA! 🏆
         </div>
@@ -342,6 +456,46 @@
         const audio = document.getElementById('backgroundMusic');
         const audioToggle = document.getElementById('audioToggle');
 
+        function revelarMisterio() {
+            // Ocultar pantalla de acceso con efecto
+            const accessScreen = document.getElementById('accessScreen');
+            accessScreen.style.opacity = '0';
+            accessScreen.style.transform = 'scale(1.1)';
+            accessScreen.style.transition = 'all 0.8s ease-out';
+            
+            setTimeout(() => {
+                accessScreen.style.display = 'none';
+                
+                // Mostrar contenido principal
+                const successContent = document.getElementById('successContent');
+                successContent.style.display = 'block';
+                successContent.style.opacity = '0';
+                successContent.style.transform = 'translateY(30px)';
+                
+                // Mostrar controles de audio
+                document.querySelector('.audio-controls').style.display = 'block';
+                
+                // Animar entrada del contenido
+                setTimeout(() => {
+                    successContent.style.transition = 'all 1s ease-out';
+                    successContent.style.opacity = '1';
+                    successContent.style.transform = 'translateY(0)';
+                }, 100);
+                
+                // Reproducir música automáticamente
+                setTimeout(() => {
+                    audio.play().then(() => {
+                        audioPlaying = true;
+                        audioToggle.textContent = '🔊';
+                    }).catch(e => {
+                        console.log('Error al reproducir audio:', e);
+                        audioToggle.textContent = '🔇';
+                    });
+                }, 500);
+                
+            }, 800);
+        }
+
         function toggleAudio() {
             if (audioPlaying) {
                 audio.pause();
@@ -355,21 +509,6 @@
                 audioPlaying = true;
             }
         }
-
-        // Intentar reproducir automáticamente cuando se carga la página
-        window.addEventListener('load', function() {
-            // Pequeño delay para que la página termine de cargar
-            setTimeout(() => {
-                audio.play().then(() => {
-                    audioPlaying = true;
-                    audioToggle.textContent = '🔊';
-                }).catch(e => {
-                    // Los navegadores modernos no permiten autoplay sin interacción del usuario
-                    console.log('Autoplay bloqueado. El usuario debe hacer clic para reproducir.');
-                    audioToggle.textContent = '🔇';
-                });
-            }, 1000);
-        });
 
         // Función para reemplazar el placeholder con una imagen QR real
         function setQRImage(imagePath) {
