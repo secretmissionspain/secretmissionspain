@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta de Clara Beamount - Arqueología</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Typewriter:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2B48C 50%, #F5DEB3 100%);
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            padding: 10px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%23654321" opacity="0.1"/></svg>');
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .letter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #F5F5DC;
+            box-shadow: 
+                0 0 20px rgba(0,0,0,0.3),
+                inset 0 0 120px rgba(139,69,19,0.1);
+            border: 2px solid #8B4513;
+            position: relative;
+            min-height: 90vh;
+        }
+        
+        .letter-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 24px,
+                    rgba(139,69,19,0.1) 25px
+                );
+            pointer-events: none;
+        }
+        
+        .letter-header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 3px double #8B4513;
+            background: linear-gradient(45deg, #F5DEB3, #DDD);
+        }
+        
+        .date {
+            font-size: 14px;
+            color: #654321;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .letter-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #8B4513;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        
+        .letter-content {
+            padding: 30px;
+            line-height: 1.8;
+            color: #2F1B14;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .intro-text {
+            margin-bottom: 40px;
+            text-align: justify;
+        }
+        
+        .character-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(245,245,220,0.7);
+            border-left: 4px solid #8B4513;
+            border-radius: 5px;
+        }
+        
+        .character-description {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .photos-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .photo-button {
+            background: #8B4513;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .photo-button:hover {
+            background: #A0522D;
+            transform: translateY(-2px);
+        }
+        
+        .photo-button:active {
+            transform: translateY(0);
+        }
+        
+        .input-section {
+            background: rgba(139,69,19,0.1);
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 10px;
+            border: 2px dashed #8B4513;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .character-input-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(245,245,220,0.5);
+            border-radius: 8px;
+            border: 1px solid #8B4513;
+        }
+        
+        .name-input {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            border: 2px solid #8B4513;
+            background: #FFFEF7;
+            font-family: inherit;
+            font-size: 16px;
+            border-radius: 5px;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .name-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(139,69,19,0.5);
+        }
+        
+        .check-button {
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+            display: block;
+            margin: 30px auto;
+        }
+        
+        .check-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+        }
+        
+        .error-message {
+            background: #8B0000;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .typewriter {
+            border-right: 2px solid #8B4513;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #8B4513; }
+        }
+        
+        .signature {
+            text-align: right;
+            margin-top: 50px;
+            font-style: italic;
+            color: #654321;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .letter-container {
+                margin: 5px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            
+            .letter-content {
+                padding: 20px;
+            }
+            
+            .letter-title {
+                font-size: 20px;
+            }
+            
+            .greeting {
+                font-size: 16px;
+            }
+            
+            .photos-container {
+                flex-direction: column;
+            }
+            
+            .photo-button {
+                width: 100%;
+                padding: 12px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .letter-label {
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+            
+            .name-input {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .letter-header {
+                padding: 20px 15px;
+            }
+            
+            .letter-content {
+                padding: 15px;
+            }
+            
+            .letter-title {
+                font-size: 18px;
+            }
+            
+            .character-section {
+                padding: 15px;
+                margin-bottom: 30px;
+            }
+            
+            .input-section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="letter-container">
+        <div class="letter-header">
+            <div class="date">Año de Nuestro Señor de 1935</div>
+            <div class="letter-title">CORRESPONDENCIA ARQUEOLÓGICA</div>
+            <div style="font-size: 12px; color: #654321;">Departamento de Investigaciones Históricas</div>
+        </div>
+        
+        <div class="letter-content">
+            <div class="greeting typewriter" id="greeting"></div>
+            
+            <div class="intro-text typewriter" id="intro"></div>
+            
+            <div class="character-section">
+                <div class="character-description typewriter" id="char1-desc"></div>
+                <div class="photos-container">
+                    <button class="photo-button" onclick="showPhoto('Carter')">📸 Ver Fotografía del Arqueólogo</button>
+                    <button class="photo-button" onclick="showPhoto('Tumba')">🏺 Ver Fotografía del Descubrimiento</button>
+                </div>
+            </div>
+            
+            <div class="character-section">
+                <div class="character-description typewriter" id="char2-desc"></div>
+                <div class="photos-container">
+                    <button class="photo-button" onclick="showPhoto('Bingham')">📸 Ver Fotografía del Explorador</button>
+                    <button class="photo-button" onclick="showPhoto('Machu')">🏔️ Ver Fotografía del Descubrimiento</button>
+                </div>
+            </div>
+            
+            <div class="character-section">
+                <div class="character-description typewriter" id="char3-desc"></div>
+                <div class="photos-container">
+                    <button class="photo-button" onclick="showPhoto('Schliemann')">📸 Ver Fotografía del Comerciante</button>
+                    <button class="photo-button" onclick="showPhoto('Troya')">🏛️ Ver Fotografía del Descubrimiento</button>
+                </div>
+            </div>
+            
+            <div class="input-section">
+                <h3 style="text-align: center; margin-bottom: 30px; color: #8B4513;">Complete los Nombres de los Arqueólogos:</h3>
+                
+                <div class="character-input-section">
+                    <h4 style="color: #654321; margin-bottom: 15px; text-align: center;">Nombre del primer personaje (H.C.)</h4>
+                    <div class="input-group">
+                        <input type="text" class="name-input" id="char1-name" placeholder="H___" maxlength="15">
+                        <input type="text" class="name-input" id="char1-surname" placeholder="C______" maxlength="15">
+                    </div>
+                </div>
+                
+                <div class="character-input-section">
+                    <h4 style="color: #654321; margin-bottom: 15px; text-align: center;">Nombre del segundo personaje (H.B.)</h4>
+                    <div class="input-group">
+                        <input type="text" class="name-input" id="char2-name" placeholder="H____" maxlength="15">
+                        <input type="text" class="name-input" id="char2-surname" placeholder="B______" maxlength="15">
+                    </div>
+                </div>
+                
+                <div class="character-input-section">
+                    <h4 style="color: #654321; margin-bottom: 15px; text-align: center;">Nombre del tercer personaje (H.S.)</h4>
+                    <div class="input-group">
+                        <input type="text" class="name-input" id="char3-name" placeholder="H_______" maxlength="15">
+                        <input type="text" class="name-input" id="char3-surname" placeholder="S__________" maxlength="15">
+                    </div>
+                </div>
+                
+                <button class="check-button" onclick="checkAnswers()">🔍 Verificar Respuestas</button>
+                
+                <div class="error-message" id="error-message"></div>
+            </div>
+            
+            <div class="signature typewriter" id="signature"></div>
+        </div>
+    </div>
+    
+    <script>
+        const texts = {
+            greeting: "Admirada Clara Beamount:",
+            intro: "Como experta en fotografía arqueológica necesitamos que nos ayude a revelar el nombre de los siguientes personajes que tienen en su haber alguno de los más importantes descubrimientos de la historia de la arqueología. Le mostraremos las fotos de los personajes y sus descubrimientos. Tenemos las iniciales, pero necesitamos que nos diga el nombre completo de los mismos.",
+            char1: "Las iniciales del personaje uno son H C. Este hombre aparece en muchas fotos con sombrero y traje, a menudo con un aire serio y concentrado. Fue el arqueólogo británico que descubrió la tumba de Tutankamón en el Valle de los Reyes, Egipto, en 1922. Su hallazgo desató una auténtica fiebre por la egiptología y cambió para siempre la historia de la arqueología.",
+            char2: "Las iniciales del personaje dos son H B. En sus retratos suele aparecer en un entorno selvático o montañoso, muchas veces con atuendo de explorador. Fue quien redescubrió para Occidente Machu Picchu, la ciudadela inca escondida entre las montañas del Perú, en 1911. Aunque su papel como descubridor es hoy debatido, su figura sigue muy ligada a la imagen de los aventureros de comienzos del siglo XX.",
+            char3: "Las iniciales del personaje tres son H S. De aspecto decimonónico, con barba y a menudo vestido con chaleco y reloj de cadena, este comerciante reconvertido en arqueólogo autodidacta excavó en Asia Menor siguiendo su convicción de que los mitos de la Ilíada se basaban en hechos reales. Encontró los restos de lo que identificó como la ciudad de Troya, en la actual Turquía, en la década de 1870.",
+            signature: "Con mis más distinguidos saludos,\nClara Beamount\nDepartamento de Fotografía Arqueológica"
+        };
+        
+        let currentIndex = 0;
+        let currentText = '';
+        let currentElement = null;
+        let typingSpeed = 50;
+        
+        function typeWriter(element, text, callback) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, typingSpeed);
+                } else {
+                    element.classList.remove('typewriter');
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+        
+        function startTyping() {
+            const sequence = [
+                { element: 'greeting', text: texts.greeting },
+                { element: 'intro', text: texts.intro },
+                { element: 'char1-desc', text: texts.char1 },
+                { element: 'char2-desc', text: texts.char2 },
+                { element: 'char3-desc', text: texts.char3 },
+                { element: 'signature', text: texts.signature }
+            ];
+            
+            let index = 0;
+            
+            function typeNext() {
+                if (index < sequence.length) {
+                    const current = sequence[index];
+                    const element = document.getElementById(current.element);
+                    typeWriter(element, current.text, () => {
+                        setTimeout(() => {
+                            index++;
+                            typeNext();
+                        }, 500);
+                    });
+                }
+            }
+            
+            typeNext();
+        }
+        
+        function showPhoto(type) {
+            const messages = {
+                'Carter': '📸 Fotografía de Howard Carter: Un hombre distinguido con sombrero y traje, examinando cuidadosamente los tesoros de la tumba.',
+                'Tumba': '🏺 Descubrimiento: La magnífica antecámara de la tumba de Tutankamón, repleta de tesoros dorados que habían permanecido ocultos durante milenios.',
+                'Bingham': '📸 Fotografía de Hiram Bingham: Un explorador en las montañas peruanas, con el equipo típico de las expediciones de principios del siglo XX.',
+                'Machu': '🏔️ Descubrimiento: Las impresionantes ruinas de Machu Picchu emergiendo entre las nubes, una ciudadela inca perfectamente conservada.',
+                'Schliemann': '📸 Fotografía de Heinrich Schliemann: Un caballero de aspecto victoriano con barba, vestido formalmente con chaleco y reloj de cadena.',
+                'Troya': '🏛️ Descubrimiento: Las excavaciones en la colina de Hisarlik, revelando los estratos de la antigua ciudad que podría ser la Troya homérica.'
+            };
+            
+            alert(messages[type] || 'Fotografía no disponible en este momento.');
+        }
+        
+        function checkAnswers() {
+            const answers = {
+                char1: { name: 'howard', surname: 'carter' },
+                char2: { name: 'hiram', surname: 'bingham' },
+                char3: { name: 'heinrich', surname: 'schliemann' }
+            };
+            
+            const userAnswers = {
+                char1: {
+                    name: document.getElementById('char1-name').value.toLowerCase().trim(),
+                    surname: document.getElementById('char1-surname').value.toLowerCase().trim()
+                },
+                char2: {
+                    name: document.getElementById('char2-name').value.toLowerCase().trim(),
+                    surname: document.getElementById('char2-surname').value.toLowerCase().trim()
+                },
+                char3: {
+                    name: document.getElementById('char3-name').value.toLowerCase().trim(),
+                    surname: document.getElementById('char3-surname').value.toLowerCase().trim()
+                }
+            };
+            
+            let correct = true;
+            let errorNames = [];
+            
+            for (let char in answers) {
+                if (userAnswers[char].name !== answers[char].name || 
+                    userAnswers[char].surname !== answers[char].surname) {
+                    correct = false;
+                    if (char === 'char1') errorNames.push('H.C.');
+                    if (char === 'char2') errorNames.push('H.B.');
+                    if (char === 'char3') errorNames.push('H.S.');
+                }
+            }
+            
+            if (correct) {
+                // Crear la página success.html dinámicamente
+                const successContent = `
+                    <!DOCTYPE html>
+                    <html lang="es">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>¡Éxito! - Investigación Completada</title>
+                        <style>
+                            body {
+                                background: linear-gradient(135deg, #8B4513 0%, #D2B48C 50%, #F5DEB3 100%);
+                                font-family: 'Courier New', monospace;
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                padding: 20px;
+                            }
+                            .success-container {
+                                background: #F5F5DC;
+                                padding: 50px;
+                                border-radius: 15px;
+                                box-shadow: 0 0 30px rgba(0,0,0,0.3);
+                                text-align: center;
+                                border: 3px solid #8B4513;
+                                max-width: 600px;
+                            }
+                            h1 {
+                                color: #8B4513;
+                                font-size: 32px;
+                                margin-bottom: 30px;
+                            }
+                            p {
+                                color: #2F1B14;
+                                font-size: 18px;
+                                line-height: 1.6;
+                                margin-bottom: 20px;
+                            }
+                            .signature {
+                                margin-top: 40px;
+                                font-style: italic;
+                                color: #654321;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="success-container">
+                            <h1>🎉 ¡INVESTIGACIÓN COMPLETADA! 🎉</h1>
+                            <p>¡Excelente trabajo, estimado colega!</p>
+                            <p>Ha identificado correctamente a los tres grandes arqueólogos:</p>
+                            <p><strong>Howard Carter</strong> - Descubridor de la tumba de Tutankamón</p>
+                            <p><strong>Hiram Bingham</strong> - Redescubridor de Machu Picchu</p>
+                            <p><strong>Heinrich Schliemann</strong> - Excavador de Troya</p>
+                            <p>Su conocimiento en arqueología es verdaderamente admirable.</p>
+                            <div class="signature">
+                                Con mis felicitaciones,<br>
+                                Clara Beamount
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                // Abrir nueva ventana con el contenido de éxito
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(successContent);
+                newWindow.document.close();
+                
+            } else {
+                const errorMsg = document.getElementById('error-message');
+                if (errorNames.length === 1) {
+                    errorMsg.textContent = `El nombre del personaje ${errorNames[0]} no es correcto. Le invitamos a intentarlo de nuevo.`;
+                } else {
+                    errorMsg.textContent = `Los nombres de los personajes ${errorNames.join(', ')} no son correctos. Le invitamos a intentarlo de nuevo.`;
+                }
+                errorMsg.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Iniciar el efecto de máquina de escribir cuando se carga la página
+        window.addEventListener('load', () => {
+            setTimeout(startTyping, 500);
+        });
+        
+        // Permitir envío con Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswers();
+            }
+        });
+    </script>
+</body>
+</html>
