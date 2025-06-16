@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta del Museo Británico</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.1) 0%, transparent 50%);
+        }
+
+        .carta-container {
+            background: #F5F5DC;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            box-shadow: 
+                0 0 30px rgba(0,0,0,0.5),
+                inset 0 0 50px rgba(139, 69, 19, 0.1);
+            border: 3px solid #8B4513;
+            position: relative;
+            background-image: 
+                linear-gradient(90deg, transparent 98%, rgba(139, 69, 19, 0.1) 100%),
+                linear-gradient(180deg, transparent 98%, rgba(139, 69, 19, 0.1) 100%);
+            background-size: 30px 30px;
+            margin: 10px 0;
+        }
+
+        .carta-container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #8B4513, #A0522D, #CD853F, #8B4513);
+            z-index: -1;
+            border-radius: 5px;
+        }
+
+        .membrete {
+            text-align: center;
+            border-bottom: 2px solid #8B4513;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .membrete h1 {
+            font-size: 18px;
+            color: #8B4513;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .membrete p {
+            font-size: 12px;
+            color: #A0522D;
+            margin: 5px 0 0 0;
+        }
+
+        .contenido {
+            line-height: 1.6;
+            font-size: 14px;
+            color: #2F1B14;
+            text-align: justify;
+        }
+
+        .destinatario {
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .pregunta {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #8B4513;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .form-group {
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 700;
+            color: #8B4513;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            border: 2px solid #8B4513;
+            background: rgba(245, 245, 220, 0.9);
+            border-radius: 3px;
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(139, 69, 19, 0.5);
+            background: #FFF;
+        }
+
+        .boton {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .boton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        .boton:active {
+            transform: translateY(0);
+        }
+
+        .mensaje {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: 700;
+            display: none;
+        }
+
+        .mensaje.error {
+            background: #FFE6E6;
+            color: #CC0000;
+            border: 2px solid #CC0000;
+        }
+
+        .mensaje.exito {
+            background: #E6FFE6;
+            color: #006600;
+            border: 2px solid #006600;
+        }
+
+        .pista-container {
+            margin-top: 30px;
+            border-top: 2px solid #8B4513;
+            padding-top: 20px;
+        }
+
+        .pista-toggle {
+            background: rgba(139, 69, 19, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Courier Prime', monospace;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .pista-content {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(245, 245, 220, 0.7);
+            border: 1px solid #8B4513;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .cursor {
+            display: inline-block;
+            background-color: #2F1B14;
+            width: 2px;
+            height: 1.2em;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .hidden {
+            opacity: 0;
+        }
+
+        .visible {
+            opacity: 1;
+        }
+
+        /* Media Queries para dispositivos móviles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+
+            .carta-container {
+                padding: 15px;
+                border: 2px solid #8B4513;
+                background-size: 20px 20px;
+                margin: 0;
+            }
+
+            .membrete {
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+            }
+
+            .membrete h1 {
+                font-size: 16px;
+                line-height: 1.2;
+            }
+
+            .membrete p {
+                font-size: 11px;
+            }
+
+            .contenido {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .destinatario {
+                margin-bottom: 20px;
+            }
+
+            .pregunta {
+                padding: 12px;
+                margin: 15px 0;
+            }
+
+            .form-group {
+                margin: 12px 0;
+                gap: 6px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+                line-height: 1.3;
+            }
+
+            .form-group input {
+                padding: 12px 10px;
+                font-size: 16px;
+            }
+
+            .boton {
+                padding: 14px 20px;
+                font-size: 15px;
+                margin: 15px 0;
+            }
+
+            .pista-toggle {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+
+            .pista-content {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .mensaje {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .cursor {
+                width: 1px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carta-container {
+                padding: 12px;
+            }
+
+            .membrete h1 {
+                font-size: 14px;
+            }
+
+            .membrete p {
+                font-size: 10px;
+            }
+
+            .contenido {
+                font-size: 12px;
+            }
+
+            .form-group label {
+                font-size: 12px;
+            }
+
+            .form-group input {
+                padding: 10px 8px;
+                font-size: 15px;
+            }
+
+            .boton {
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+
+            .pista-toggle {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* Mejoras para touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .boton:hover {
+                transform: none;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            }
+
+            .boton:active {
+                transform: scale(0.98);
+            }
+
+            .form-group input {
+                padding: 14px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carta-container">
+        <div class="membrete">
+            <h1>MUSEO BRITÁNICO</h1>
+            <p>Londres, Inglaterra - Departamento de Antigüedades Egipcias</p>
+        </div>
+
+        <div class="contenido" id="contenido">
+            <div class="destinatario">
+                <span id="texto-typed"></span><span class="cursor" id="cursor"></span>
+            </div>
+        </div>
+
+        <form id="formulario">
+            <div class="pregunta" id="pregunta1" style="display: none;">
+                <div class="form-group">
+                    <label for="personaje">Nombre del personaje que descifró los jeroglíficos:</label>
+                    <input type="text" id="personaje" name="personaje" required>
+                </div>
+            </div>
+
+            <div class="pregunta" id="pregunta2" style="display: none;">
+                <div class="form-group">
+                    <label for="año_creacion">Año antes de nuestra era (solo el número):</label>
+                    <input type="number" id="año_creacion" name="año_creacion" required>
+                </div>
+            </div>
+
+            <div class="pregunta" id="pregunta3" style="display: none;">
+                <div class="form-group">
+                    <label for="año_descubrimiento">Año de descubrimiento por las tropas de Napoleón:</label>
+                    <input type="number" id="año_descubrimiento" name="año_descubrimiento" required>
+                </div>
+            </div>
+
+            <button type="submit" class="boton" id="enviar-btn" style="display: none;">Enviar Resultados</button>
+        </form>
+
+        <div class="mensaje" id="mensaje"></div>
+
+        <div class="pista-container" id="pista-container" style="display: none;">
+            <button type="button" class="pista-toggle" onclick="togglePista()">Ver Pista</button>
+            <div class="pista-content" id="pista-content">
+                <p><strong>Pista:</strong> Aquí aparecerá una imagen que podrá añadir posteriormente.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textoCompleto = `A la atención de la Dra. Helena Ward:
+
+        Somos un grupo de conservadores del Museo Británico, donde, como bien sabe, se encuentra la excepcional piedra Rosetta.
+
+        Esta pieza única ha sido clave para resolver el misterio de los jeroglíficos egipcios. Se trata de una gran roca en la que hay el mismo texto en tres idiomas diferentes: Griego, Demótico y Jeroglífico Egipcio.
+
+        Usted que es una eminencia en el conocimiento de lenguajes antiguos, nos puede decir qué personaje fue el primero en descifrar los jeroglíficos egipcios?
+
+        [PREGUNTA 1]
+
+        Por favor díganos también en qué momento antes de nuestra era fue hecha la piedra Rosetta durante el reinado del faraón Ptolomeo V en el Antiguo Egipto, para conmemorar la coronación del joven rey.
+
+        [PREGUNTA 2]
+
+        Para finalizar nos gustaría saber en qué año la descubrieron después de tanto tiempo las tropas de Napoleón Bonaparte en Francia?
+
+        [PREGUNTA 3]
+
+        Atentamente,
+        Departamento de Conservación
+        Museo Británico`;
+
+        let indiceTexto = 0;
+        let preguntaActual = 1;
+        const velocidadEscritura = window.innerWidth <= 768 ? 20 : 30;
+
+        function escribirTexto() {
+            const elemento = document.getElementById('texto-typed');
+            const cursor = document.getElementById('cursor');
+            
+            if (indiceTexto < textoCompleto.length) {
+                const caracter = textoCompleto.charAt(indiceTexto);
+                
+                if (textoCompleto.substr(indiceTexto, 12) === '[PREGUNTA 1]') {
+                    mostrarPregunta(1);
+                    indiceTexto += 12;
+                } else if (textoCompleto.substr(indiceTexto, 12) === '[PREGUNTA 2]') {
+                    mostrarPregunta(2);
+                    indiceTexto += 12;
+                } else if (textoCompleto.substr(indiceTexto, 12) === '[PREGUNTA 3]') {
+                    mostrarPregunta(3);
+                    indiceTexto += 12;
+                } else {
+                    elemento.innerHTML += caracter === '\n' ? '<br>' : caracter;
+                    indiceTexto++;
+                }
+                
+                setTimeout(escribirTexto, velocidadEscritura);
+            } else {
+                cursor.style.display = 'none';
+                document.getElementById('enviar-btn').style.display = 'block';
+                document.getElementById('pista-container').style.display = 'block';
+            }
+        }
+
+        function mostrarPregunta(numero) {
+            document.getElementById(`pregunta${numero}`).style.display = 'block';
+            preguntaActual = numero;
+        }
+
+        function togglePista() {
+            const pistaContent = document.getElementById('pista-content');
+            const toggle = document.querySelector('.pista-toggle');
+            
+            if (pistaContent.style.display === 'none' || pistaContent.style.display === '') {
+                pistaContent.style.display = 'block';
+                toggle.textContent = 'Ocultar Pista';
+            } else {
+                pistaContent.style.display = 'none';
+                toggle.textContent = 'Ver Pista';
+            }
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const mensaje = document.getElementById('mensaje');
+            mensaje.textContent = texto;
+            mensaje.className = `mensaje ${tipo}`;
+            mensaje.style.display = 'block';
+            
+            setTimeout(() => {
+                mensaje.style.display = 'none';
+            }, 5000);
+        }
+
+        function validarRespuestas() {
+            const añoCreacion = parseInt(document.getElementById('año_creacion').value);
+            const añoDescubrimiento = parseInt(document.getElementById('año_descubrimiento').value);
+            
+            const errores = [];
+            
+            if (añoCreacion !== 196) {
+                errores.push('El año de creación de la piedra Rosetta no es correcto');
+            }
+            
+            if (añoDescubrimiento !== 1799) {
+                errores.push('El año de descubrimiento no es correcto');
+            }
+            
+            return errores;
+        }
+
+        document.getElementById('formulario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const errores = validarRespuestas();
+            
+            if (errores.length > 0) {
+                mostrarMensaje(errores.join('. ') + '. Por favor, inténtelo de nuevo.', 'error');
+                return;
+            }
+            
+            // Si no hay errores, enviar el formulario
+            const formData = new FormData(this);
+            
+            fetch('https://formspree.io/f/xblovlaz', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    mostrarMensaje('¡Respuestas enviadas correctamente! Gracias por su participación.', 'exito');
+                    this.reset();
+                } else {
+                    mostrarMensaje('Error al enviar las respuestas. Por favor, inténtelo de nuevo.', 'error');
+                }
+            })
+            .catch(error => {
+                mostrarMensaje('Error al enviar las respuestas. Por favor, inténtelo de nuevo.', 'error');
+            });
+        });
+
+        // Iniciar el efecto de máquina de escribir cuando se carga la página
+        window.addEventListener('load', function() {
+            setTimeout(escribirTexto, 1000);
+        });
+    </script>
+</body>
+</html>
