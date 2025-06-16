@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Misión Completada! - Aventura Arqueológica</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(135deg, #8B4513, #A0522D, #CD853F);
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(205, 133, 63, 0.1) 0%, transparent 50%);
+            animation: backgroundShift 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .success-container {
+            background: linear-gradient(135deg, #F5F5DC, #FFF8DC);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.2),
+                0 0 0 8px rgba(139, 69, 19, 0.1);
+            border: 4px solid #8B4513;
+            position: relative;
+            text-align: center;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .success-container::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: linear-gradient(45deg, #8B4513, #A0522D, #CD853F, #8B4513);
+            z-index: -1;
+            border-radius: 20px;
+            animation: borderRotate 8s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            from { background-position: 0% 50%; }
+            to { background-position: 100% 50%; }
+        }
+
+        .titulo {
+            color: #8B4513;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(139, 69, 19, 0.3); }
+        }
+
+        .mensaje {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #2F1B14;
+            margin-bottom: 40px;
+            text-align: justify;
+            padding: 20px;
+            background: rgba(139, 69, 19, 0.05);
+            border-radius: 10px;
+            border-left: 5px solid #8B4513;
+        }
+
+        .qr-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px dashed #8B4513;
+            margin: 30px 0;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-placeholder {
+            width: 180px;
+            height: 180px;
+            border: 2px solid #8B4513;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: repeating-linear-gradient(
+                45deg,
+                #F5F5DC,
+                #F5F5DC 10px,
+                #FFF8DC 10px,
+                #FFF8DC 20px
+            );
+            color: #8B4513;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .qr-instructions {
+            color: #8B4513;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .treasure-icon {
+            font-size: 48px;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .decorative-line {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #8B4513, transparent);
+            margin: 20px 0;
+            border-radius: 2px;
+        }
+
+        .congratulations {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #8B4513;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #8B4513;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .audio-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(139, 69, 19, 0.9);
+            padding: 10px;
+            border-radius: 50px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .access-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8B4513, #A0522D, #CD853F);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.3) 0%, transparent 50%);
+        }
+
+        .access-container {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mystery-icon {
+            font-size: 120px;
+            margin-bottom: 40px;
+            animation: mysteryPulse 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes mysteryPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .access-button {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #8B4513;
+            font-family: 'Courier Prime', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 20px 40px;
+            border: 4px solid #8B4513;
+            border-radius: 15px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes buttonGlow {
+            from { 
+                box-shadow: 
+                    0 8px 25px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            }
+            to { 
+                box-shadow: 
+                    0 8px 25px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                    0 0 30px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        .access-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 12px 35px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 215, 0, 0.8);
+        }
+
+        .access-button:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .audio-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .audio-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .audio-status {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(139, 69, 19, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+        }
+
+        /* Media Queries para dispositivos móviles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .success-container {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            .titulo {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+
+            .mensaje {
+                font-size: 16px;
+                padding: 15px;
+                line-height: 1.6;
+            }
+
+            .qr-section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .qr-placeholder {
+                width: 150px;
+                height: 150px;
+                font-size: 12px;
+            }
+
+            .qr-instructions {
+                font-size: 14px;
+            }
+
+            .congratulations {
+                font-size: 18px;
+                padding: 12px;
+            }
+
+            .treasure-icon {
+                font-size: 36px;
+                margin: 15px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-container {
+                padding: 15px;
+            }
+
+            .titulo {
+                font-size: 20px;
+            }
+
+            .mensaje {
+                font-size: 14px;
+                text-align: left;
+            }
+
+            .qr-placeholder {
+                width: 120px;
+                height: 120px;
+                font-size: 11px;
+            }
+
+            .congratulations {
+                font-size: 16px;
+            }
+
+            .access-button {
+                font-size: 16px;
+                padding: 18px 30px;
+                letter-spacing: 1px;
+            }
+
+            .mystery-icon {
+                font-size: 90px;
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .access-button {
+                font-size: 14px;
+                padding: 15px 25px;
+                letter-spacing: 1px;
+            }
+
+            .mystery-icon {
+                font-size: 70px;
+                margin-bottom: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Controles de audio -->
+    <div class="audio-controls">
+        <button class="audio-toggle" onclick="toggleAudio()" id="audioToggle">🔊</button>
+    </div>
+
+    <!-- Status del audio -->
+    <div class="audio-status" id="audioStatus">Música activada</div>
+
+    <!-- Audio de fondo -->
+    <audio id="backgroundMusic" loop preload="auto">
+        <source src="../../../../indiana-jones-theme-song.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <!-- Pantalla inicial con botón -->
+    <div class="access-screen" id="accessScreen">
+        <div class="access-container">
+            <div class="mystery-icon">🔍</div>
+            <button class="access-button" onclick="revelarMisterio()">
+                PRESIONA PARA ACCEDER AL MISTERIO
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal (oculto inicialmente) -->
+    <div class="success-container" id="successContent" style="display: none;">
+        <div class="congratulations">
+            🏆 ¡MISIÓN COMPLETADA! 🏆
+        </div>
+
+        <h1 class="titulo">¡ENHORABUENA!</h1>
+        
+        <div class="treasure-icon">🗝️</div>
+        
+        <div class="decorative-line"></div>
+
+        <div class="mensaje">
+            <strong>¡Has conseguido averiguar el misterio!</strong><br><br>
+            
+            Enhorabuena, has demostrado tu conocimiento sobre la fotografia y los grandes descubrimientos arqueologicos.
+            <br><br>
+            Te damos el siguiente código QR. <strong>Imprímelo y muéstralo en la siguiente prueba</strong> para que te den las pistas necesarias para llegar al objetivo final.
+        </div>
+
+        <div class="decorative-line"></div>
+
+        <div class="qr-section">
+            <div class="qr-placeholder" id="qrPlaceholder">
+                [AQUÍ VA EL CÓDIGO QR]
+            </div>
+            <div class="qr-instructions">
+                📱 Imprime este QR y preséntalo en la siguiente prueba
+            </div>
+        </div>
+
+        <div class="decorative-line"></div>
+
+        <div style="color: #8B4513; font-style: italic; margin-top: 30px;">
+            "Que continuen los descubrimientos de faulosas civilizaciones y los puedas registar con su camara!!!."
+        </div>
+    </div>
+
+    <script>
+        let audioPlaying = false;
+        const audio = document.getElementById('backgroundMusic');
+        const audioToggle = document.getElementById('audioToggle');
+        const audioStatus = document.getElementById('audioStatus');
+
+        // Precargar el audio
+        audio.load();
+
+        function revelarMisterio() {
+            // Intentar reproducir audio inmediatamente tras la interacción del usuario
+            reproducirAudio();
+            
+            // Ocultar pantalla de acceso con efecto
+            const accessScreen = document.getElementById('accessScreen');
+            accessScreen.style.opacity = '0';
+            accessScreen.style.transform = 'scale(1.1)';
+            accessScreen.style.transition = 'all 0.8s ease-out';
+            
+            setTimeout(() => {
+                accessScreen.style.display = 'none';
+                
+                // Mostrar contenido principal
+                const successContent = document.getElementById('successContent');
+                successContent.style.display = 'block';
+                successContent.style.opacity = '0';
+                successContent.style.transform = 'translateY(30px)';
+                
+                // Mostrar controles de audio
+                document.querySelector('.audio-controls').style.display = 'block';
+                
+                // Animar entrada del contenido
+                setTimeout(() => {
+                    successContent.style.transition = 'all 1s ease-out';
+                    successContent.style.opacity = '1';
+                    successContent.style.transform = 'translateY(0)';
+                }, 100);
+                
+            }, 800);
+        }
+
+        function reproducirAudio() {
+            // Resetear el audio al inicio
+            audio.currentTime = 0;
+            
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Audio reproducido correctamente');
+                    audioPlaying = true;
+                    audioToggle.textContent = '🔊';
+                    mostrarEstadoAudio('Música activada', '#4CAF50');
+                }).catch(error => {
+                    console.log('Error al reproducir audio:', error);
+                    audioPlaying = false;
+                    audioToggle.textContent = '🔇';
+                    mostrarEstadoAudio('Error al reproducir música', '#f44336');
+                    
+                    // Intentar reproducir sin sonido y luego reactivar
+                    audio.muted = true;
+                    audio.play().then(() => {
+                        audio.muted = false;
+                    });
+                });
+            }
+        }
+
+        function toggleAudio() {
+            if (audioPlaying) {
+                audio.pause();
+                audioToggle.textContent = '🔇';
+                audioPlaying = false;
+                mostrarEstadoAudio('Música pausada', '#ff9800');
+            } else {
+                reproducirAudio();
+            }
+        }
+
+        function mostrarEstadoAudio(mensaje, color) {
+            audioStatus.textContent = mensaje;
+            audioStatus.style.backgroundColor = color;
+            audioStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                audioStatus.style.display = 'none';
+            }, 3000);
+        }
+
+        // Función para reemplazar el placeholder con una imagen QR real
+        function setQRImage(imagePath) {
+            const qrPlaceholder = document.getElementById('qrPlaceholder');
+            qrPlaceholder.innerHTML = `<img src="${imagePath}" alt="Código QR" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;">`;
+        }
+
+        // Manejar eventos de audio para debugging
+        audio.addEventListener('loadstart', () => console.log('Audio: Carga iniciada'));
+        audio.addEventListener('canplay', () => console.log('Audio: Listo para reproducir'));
+        audio.addEventListener('error', (e) => console.log('Audio error:', e));
+        audio.addEventListener('play', () => console.log('Audio: Reproduciendo'));
+        audio.addEventListener('pause', () => console.log('Audio: Pausado'));
+
+        // Ejemplo de cómo usar la función (descomenta y ajusta la ruta cuando tengas la imagen):
+        setQRImage('qr-code.png');
+    </script>
+</body>
+</html>
