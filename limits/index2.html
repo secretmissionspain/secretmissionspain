@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zonas de Limitación - Documentación</title>
+<style>
+  body { font-family: Arial, sans-serif; line-height: 1.5; margin: 20px; }
+  h1, h2, h3 { color: #2c3e50; }
+  pre { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; overflow-x: auto; }
+  code { font-family: monospace; background: #eee; padding: 2px 4px; border-radius: 3px; }
+  hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+  ul { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<h1>1. ZONAS DE LIMITACION</h1>
+
+<p>Ejemplo con 4 zonas de limitación genéricos y uno particular de agencia4.</p>
+
+<ul>
+  <li><strong>Genéricos:</strong>
+    <ul>
+      <li>High Priority</li>
+      <li>Medium Priority</li>
+      <li>Low Priority</li>
+      <li>Default</li>
+    </ul>
+  </li>
+  <li><strong>Específico:</strong>
+    <ul>
+      <li>Agencia 4</li>
+    </ul>
+  </li>
+</ul>
+
+<p>La creación de zonas de limitación no está automatizada, solo la configuración de una de ellas cuando esté creada.<br />
+La creación de una zona de limitación se ha de solicitar específicamente.</p>
+
+<hr />
+
+<h1>2. CONFIGURACIÓN DE LAS ZONAS DE LIMITACIÓN</h1>
+
+<p>En el fichero de configuración de nginx de la instancia (en este caso de <code>vav</code>) se configura un <code>include</code> para un subdirectorio creado por este motivo.</p>
+
+<pre><code>cat vav.conf
+</code></pre>
+
+<pre><code>###################################################################
+# LIMITACIONES AGENCIAS VIRTUALES
+###################################################################
+# Agencias  high priority
+/etc/nginx/conf.limtrates.d/highpriority.conf
+# Agencias medium priority
+/etc/nginx/conf.limtrates.d/mediumpriority.conf
+# Agencias low priority
+/etc/nginx/conf.limtrates.d/lowpriority.conf
+# Agencia agencia4
+/etc/nginx/conf.limtrates.d/agencia4.conf
+# Agencias DEFAULT
+/etc/nginx/conf.limtrates.d/default.conf
+
+server {
+    listen 80;
+    server_name vav.sir.renfe.es;
+
+    # 2. Detección por IP
+    geo $is_highpriority_ip {
+        default 0;
+        192.168.1.10 1;
+        192.168.1.11 1;
+        192.168.1.12 1;
+    }
+
+    geo $is_mediumpriority_ip {
+        default 0;
+        192.168.2.10 1;
+        192.168.2.11 1;
+        192.168.2.12 1;
+    }
+
+    geo $is_lowpriority_ip {
+        default 0;
+        192.168.3.10 1;
+        192.168.3.11 1;
+        192.168.3.12 1;
+    }
+
+    geo $is_agencia4_ip {
+        default 0;
+        192.168.3.10 1;
+        192.168.3.11 1;
+        192.168.3.12 1;
+    }
+
+    # 3. Detección por cabecera "X-Client-Name"
+    map $http_x_client_name $client_group {
+        default        default;
+        agencia1       highpriority;
+        agencia2       mediumpriority;
+        agencia3       lowpriority;
+        agencia4       agencia4;
+    }
+
+    # 4. Ruta principal
+    location /vavNegocioWeb/ {
+
+        if ($client_group = highpriority) {
+            #limit_req zone=highpriority burst=10 nodelay; #Mejor sin burst
+            limit_req zone=highpriority;
+            error_page 429 = /too-many-highpriority;
+        }
+
+        if ($client_group = mediumpriority) {
+            limit_req zone=mediumpriority;
+            error_page 429 = /too-many-mediumpriority;
+        }
+
+        if ($client_group = lowpriority) {
+            limit_req zone=lowpriority;
+            error_page 429 = /too-many-lowpriority;
+        }
+
+        if ($client_group = agencia4) {
+            limit_req zone=agencia4;
+            error_page 429 = /too-many-agencia4;
+        }
+
+        # === Prioridad 2: por IP (si cabecera no reconocida) ===
+        if ($client_group = default) {
+            if ($is_highpriority_ip) {
+                limit_req zone=highpriority;
+                error_page 429 = /too-many-highpriority;
+            }
+            if ($is_mediumpriority_ip) {
+                limit_req zone=mediumpriority;
+                error_page 429 = /too-many-mediumpriority;
+            }
+            if ($is_lowpriority_ip) {
+                limit_req zone=lowpriority;
+                error_page 429 = /too-many-lowpriority;
+            }
+            if ($is_agencia4_ip) {
+                limit_req zone=agencia4;
+                error_page 429 = /too-many-agencia4;
+            }
+        }
+
+        # === Política por defecto ===
+        if ($client_group = default) {
+            if ($is_highpriority_ip = 0) {
+                if ($is_mediumpriority_ip = 0) {
+                    if ($is_lowpriority_ip = 0) {
+                        if ($is_agencia4_ip = 0) {
+                          limit_req zone=sla_default;
+                          error_page 429 = /too-many-default;
+                        }
+                    }
+                }
+            }
+        }
+
+        proxy_read_timeout 400;
+
+        proxy_set_header "$WSSC" "https";
+        proxy_set_header "$WSPR" $server_protocol;
+        proxy_set_header "$WSRA" $remote_addr;
+        proxy_set_header "$WSRH" $host;
+        proxy_set_header "$WSRU" $remote_user;
+        proxy_set_header "$WSSN" $server_name;
+        #proxy_set_header "$WSSP" $server_port;
+        proxy_set_header "$WSSP" "443";
+        #proxy_set_header "$WSSP" ;
+
+        proxy_hide_header "$WSSAT";
+        proxy_hide_header "$WSPT";
+        proxy_hide_header "$WSFO";
+        proxy_pass http://clustervav;
+    }
+
+    # 5. Respuestas personalizadas
+    location = /too-many-highpriority {
+        default_type text/html;
+        /etc/nginx/conf.limtrates.d/return_highpriority.conf
+    }
+
+    location = /too-many-mediumpriority {
+        default_type text/html;
+        /etc/nginx/conf.limtrates.d/return_mediumpriority.conf
+    }
+
+    location = /too-many-lowpriority {
+        default_type text/html;
+        /etc/nginx/conf.limtrates.d/return_lowpriority.conf
+    }
+
+    location = /too-many-agencia4 {
+        default_type text/html;
+        /etc/nginx/conf.limtrates.d/return_agencia4.conf
+    }
+
+    location = /too-many-default {
+        default_type text/html;
+        /etc/nginx/conf.limtrates.d/return_default.conf
+    }
+}
+</code></pre>
+
+<p>En el directorio <code>${ETC_NGINX}/conf.limtrates.d</code>, se crean dos ficheros por cada uno de los limit rates:</p>
+
+<pre><code>ls -ltr conf.limtrates.d
+</code></pre>
+
+<pre><code>total 48
+-rw-r--r-- 1 root root   69 jun 19 15:38 highpriority.conf
+-rw-r--r-- 1 root root   79 jun 19 15:43 return_mediumpriority.conf
+-rw-r--r-- 1 root root   79 jun 19 15:43 return_lowpriority.conf
+-rw-r--r-- 1 root root   79 jun 19 15:43 return_highpriority.conf
+-rw-r--r-- 1 root root   79 jun 19 15:43 return_default.conf
+-rw-r--r-- 1 root root   68 jun 19 15:58 lowpriority.conf
+-rw-r--r-- 1 root root   71 jun 19 15:58 mediumpriority.conf
+-rw-r--r-- 1 root root   64 jun 19 15:58 default.conf
+drwxr-xr-x 2 root root 4096 jun 19 16:38 backup_20250619163821
+drwxr-xr-x 2 root root 4096 jun 19 16:45 backup_20250619164539
+-rw-r--r-- 1 root root   65 jun 19 16:45 agencia4.conf
+-rw-r--r-- 1 root root   79 jun 19 16:45 return_agencia4.conf
+</code></pre>
+
+<ul>
+  <li><code>&lt;limit rate name&gt;.conf</code>: Con la configuración específica del ratio</li>
+</ul>
+
+<pre><code>cat conf.limtrates.d/highpriority.conf
+</code></pre>
+
+<pre><code>limit_req_zone $binary_remote_addr zone=highpriority:10m rate=30r/m;
+</code></pre>
+
+<p>En este fichero en las automatizaciones se podrá definir el número de peticiones (30 en el caso anterior) y si el cálculo es en minutos o segundos (<code>m</code> para minutos en el caso de ejemplo).</p>
+
+<ul>
+  <li><code>return_&lt;limit rate name&gt;.conf</code>: La respuesta a dar en caso de superar el ratio</li>
+</ul>
+
+<pre><code>cat conf.limtrates.d/return_highpriority.conf
+</code></pre>
+
+<pre><code>return 429 '{"error": "rate_limit_exceeded", "message": "Límite excedido."}';
+</code></pre>
+
+<p>En este fichero en las automatizaciones se podrá definir el mensaje a devolver ("Límite excedido." en el ejemplo).</p>
+
+<hr />
+
+<h1>3. IDENTIFICACIÓN DEL CLIENTE</h1>
+
+<h3>a) Identificación por IP</h3>
+
+<p>Al inicio y al no haber otro sistema disponible la identificación se haría por IP de cliente, siendo necesario que se nos aportara las IPs que identifican a este cliente. Cualquier actualización de los clientes ha de ser informada y actualizada en la configuración:</p>
+
+<pre><code># 2. Detección por IP
+geo $is_highpriority_ip {
+    default 0;
+    # IPs agencia 1
+    192.168.1.10 1;
+    192.168.1.11 1;
+    192.168.1.12 1;
+}
+
+geo $is_mediumpriority_ip {
+    default 0;
+    # IP agencia 2
+    192.168.2.10 1;
+    # IPs agencia 3
+    192.168.2.11 1;
+    192.168.2.12 1;
+}
+</code></pre>
+
+<h3>b) Identificación por Cabecera HTTP</h3>
+
+<p>Se propone y se deja preparado para que a través de una cabecera HTTP (<code>"X-Client-Name: Agencia XXX"</code>), que se identifique a la agencia en cuestión. En este caso la agencia añadiría esta cabecera en sus peticiones y ya no sería necesario actualizar la configuración ante cambios de IP en el futuro. La identificación por IP y por cabecera funcionan en paralelo.</p>
+
+<hr />
+
+<h1>4. AUTOMATIZACIONES</h1>
+
+<p>En el directorio <code>${ETC_NGINX}/automation</code> se han creado dos herramientas de automatización:</p>
+
+<ol>
+  <li><strong>show_all_limits.sh:</strong><br />
+      Muestra las limitaciones actualmente configuradas y sus valores añadidos, además crea un JSON con estos datos por si se desean visualizar en un html o cualquier otra utilidad.</li>
+</ol>
+
+<pre><code>#> ./show_all_limits.sh --help
+🔧 Script: show_all_limits.sh
+=========================================
+Muestra y exporta las configuraciones actuales de límites de peticiones (rate limiting) en NGINX.
+
+📦 Extrae los siguientes datos para cada limit:
+  - Nombre del limit
+  - Tasa de peticiones configurada (rate)
+  - Mensaje de error personalizado
+
+📝 También genera un archivo JSON con toda la información en:
+    /etc/nginx/automation/current_limits/all_limits.json
+
+📌 Uso:
+    sudo ./show_all_limits.sh
+
+📌 Opciones:
+    -h, --help        Muestra esta ayuda y sale
+</code></pre>
+
+<pre><code>#> ./show_all_limits.sh
+📊 Recopilando configuración de limits...
+
+📋 Resultados actuales de límites:
+
+🔹 Limit           | 📈 Rate  | 💬 Mensaje
+---------------------+------------+--------------------------------------------
+agencia4             | 30r/m      | Límite excedido.
+default              | 30r/m      | Límite excedido.
+highpriority         | 30r/m      | Límite excedido.
+lowpriority          | 30r/m      | Límite excedido.
+mediumpriority       | 30r/m      | Límite excedido.
+
+✅ Todos los datos exportados a: /etc/nginx/automation/current_limits/all_limits.json
+</code></pre>
+
+<ol start="2">
+  <li><strong>update_limit.sh:</strong><br />
+      Permite actualizar la configuración de las zonas definidas, pudiendo poner el ratio y el mensaje. El script comprueba que los cambios no hacen daño a la configuración actual, haciendo antes un <code>nginx -t</code>. En el caso de que ese comando no sea exitoso vuelve a la configuración inicial sin aplicar los cambios.</li>
+</ol>
+
+<pre><code>./update_limit.sh --help
+Actualiza la configuración de limitación de tráfico para una agencia virtual en NGINX.
+
+Uso:
+  sudo ./update_limit.sh --limit-name &lt;nombre&gt; --rate-value &lt;valor&gt; --rate-unit &lt;s|m&gt; --message "&lt;mensaje&gt;"
+  sudo ./update_limit.sh --list
+
+Parámetros:
+  --limit-name     Nombre del limit (debe existir en limits.txt)
+  --rate-value     Número de peticiones (ej: 30)
+  --rate-unit      Unidad de tiempo: 's' (segundos) o 'm' (minutos)
+  --message        Mensaje de error personalizado (entre comillas)
+  --list           Muestra los limits disponibles y sale
+  --help, -h       Muestra esta ayuda
+
+Ejemplo:
+  sudo ./update_limit.sh --limit-name highpriority --rate-value 50 --rate-unit m --message "Límite excedido para cliente prioritario"
+</code></pre>
+
+<pre><code>./update_limit.sh --limit-name highpriority --rate-value 50 --rate-unit m --message "Límite excedido para cliente prioritario"
+2025/06/25 10:40:39 [emerg] 55329#55329: unknown directive "/etc/nginx/conf.limtrates.d/highpriority.conf" in /etc/nginx/conf.d/vav.conf:15
+nginx: configuration file /etc/nginx/nginx.conf test failed
+❌ Error en configuración. Restaurando backups...
+</code></pre>
+
+<hr />
+
+<h1>5. PROPUESTAS</h1>
+
+<ol>
+  <li>Se puede modificar el script para que se ejecute a la vez en todos los nodos y así tener sincronizada la configuración en todos a la vez, aplicando la misma en el mismo momento.</li>
+  <li>Se puede, a través de Rundeck, crear una interfaz que ejecute estos scripts y así facilitar que lo añadan terceras personas.</li>
+  <li>El JSON se puede publicar en los mismos nginx (en un puerto diferente al servicio) para que lo pueda visualizar una tercera persona que puede ser la que use Rundeck para modificar los ratios.</li>
+</ol>
+
+<hr />
+
+<h1>6. LIMITACIONES ESTRICTAS [IMPORTANTE]</h1>
+
+<p>Es importante reseñar que las limitaciones de un nodo, al estar replicadas en el resto de nodos, hacen que las limitaciones definidas para un cliente no sean las de ese nodo, sino las de ese nodo y la suma del resto, pero teniendo en cuenta que siempre es posible que haya nodos donde haya superado la limitación y nodos donde no. Esto pasa aquí, y pasaría en datapower donde tenemos dos nodos no conectados a estos efectos.</p>
+
+<p>La manera de solucionar esto es forzar la afinidad del cliente al nodo a través del F5, así nos aseguraríamos que la limitación de ese cliente es exactamente la que hemos configurado en el nodo.</p>
+
+</body>
+</html>
