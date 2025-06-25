@@ -228,9 +228,7 @@ drwxr-xr-x 2 root root 4096 jun 19 16:45 backup_20250619164539
 </ul>
 
 <pre><code>cat conf.limtrates.d/highpriority.conf
-</code></pre>
-
-<pre><code>limit_req_zone $binary_remote_addr zone=highpriority:10m rate=30r/m;
+limit_req_zone $binary_remote_addr zone=highpriority:10m rate=30r/m;
 </code></pre>
 
 <p>En este fichero en las automatizaciones se podrá definir el número de peticiones (30 en el caso anterior) y si el cálculo es en minutos o segundos (<code>m</code> para minutos en el caso de ejemplo).</p>
@@ -240,9 +238,7 @@ drwxr-xr-x 2 root root 4096 jun 19 16:45 backup_20250619164539
 </ul>
 
 <pre><code>cat conf.limtrates.d/return_highpriority.conf
-</code></pre>
-
-<pre><code>return 429 '{"error": "rate_limit_exceeded", "message": "Límite excedido."}';
+return 429 '{"error": "rate_limit_exceeded", "message": "Límite excedido."}';
 </code></pre>
 
 <p>En este fichero en las automatizaciones se podrá definir el mensaje a devolver ("Límite excedido." en el ejemplo).</p>
