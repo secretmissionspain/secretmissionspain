@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Límites Nginx</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: var(--card-background);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .header-meta {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .timestamp {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .limits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .limit-card {
+            background: var(--card-background);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .limit-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-1px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .zone-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .zone-type {
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .zone-type.high-priority {
+            background-color: #fef2f2;
+            color: var(--danger-color);
+        }
+
+        .zone-type.medium-priority {
+            background-color: #fffbeb;
+            color: var(--warning-color);
+        }
+
+        .zone-type.low-priority {
+            background-color: #f0fdf4;
+            color: var(--success-color);
+        }
+
+        .zone-type.agency {
+            background-color: #eff6ff;
+            color: var(--primary-color);
+        }
+
+        .zone-type.default {
+            background-color: #f8fafc;
+            color: var(--text-secondary);
+        }
+
+        .card-content {
+            space-y: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            min-width: 120px;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            text-align: right;
+            flex: 1;
+        }
+
+        .rate-value {
+            font-family: 'Courier New', monospace;
+            background-color: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+
+        .message-value {
+            font-style: italic;
+            max-width: 200px;
+            word-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .limits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-meta {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Panel de Control de Límites Nginx</h1>
+            <p>Configuración de zonas de limitación de velocidad y mensajes personalizados</p>
+            <div class="header-meta">
+                <div class="timestamp">Última actualización: <span id="lastUpdate"></span></div>
+            </div>
+        </div>
+
+        <div class="limits-grid" id="limitsContainer">
+            <!-- Las tarjetas se generarán dinámicamente -->
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE LÍMITES
+        const LIMITS_CONFIG = {"limits":{"agencia4":{"rate":"30r/m","message":"Límite excedido."},"default":{"rate":"30r/m","message":"Límite excedido."},"highpriority":{"rate":"30r/m","message":"Límite excedido."},"lowpriority":{"rate":"30r/m","message":"Límite excedido."},"mediumpriority":{"rate":"30r/m","message":"Límite excedido."}}};
+
+        // Función para determinar el tipo de zona
+        function getZoneType(zoneName) {
+            const name = zoneName.toLowerCase();
+            if (name.includes('high')) return 'high-priority';
+            if (name.includes('medium')) return 'medium-priority';
+            if (name.includes('low')) return 'low-priority';
+            if (name.includes('agency') || name.includes('agencia')) return 'agency';
+            return 'default';
+        }
+
+        // Función para formatear el nombre de la zona
+        function formatZoneName(zoneName) {
+            return zoneName
+                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                .replace(/^./, str => str.toUpperCase())
+                .replace(/priority/gi, 'Priority')
+                .replace(/agencia/gi, 'Agencia');
+        }
+
+        // Función para obtener el nombre del tipo de zona
+        function getZoneTypeName(type) {
+            const types = {
+                'high-priority': 'Alta Prioridad',
+                'medium-priority': 'Media Prioridad',
+                'low-priority': 'Baja Prioridad',
+                'agency': 'Agencia',
+                'default': 'Por Defecto'
+            };
+            return types[type] || 'Estándar';
+        }
+
+        // Función para crear una tarjeta de límite
+        function createLimitCard(zoneName, zoneData) {
+            const zoneType = getZoneType(zoneName);
+            const formattedName = formatZoneName(zoneName);
+            const typeName = getZoneTypeName(zoneType);
+            
+            return `
+                <div class="limit-card">
+                    <div class="card-header">
+                        <div class="zone-name">${formattedName}</div>
+                        <div class="zone-type ${zoneType}">${typeName}</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="detail-row">
+                            <div class="detail-label">Límite de Velocidad:</div>
+                            <div class="detail-value">
+                                <span class="rate-value">${zoneData.rate}</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Mensaje de Error:</div>
+                            <div class="detail-value message-value">${zoneData.message}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para inicializar el dashboard
+        function initializeDashboard() {
+            const limits = LIMITS_CONFIG.limits;
+            
+            // Generar las tarjetas
+            const limitsContainer = document.getElementById('limitsContainer');
+            limitsContainer.innerHTML = Object.entries(limits)
+                .map(([zoneName, zoneData]) => createLimitCard(zoneName, zoneData))
+                .join('');
+            
+            // Actualizar timestamp
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString('es-ES');
+        }
+
+        // Inicializar cuando la página esté cargada
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>
