@@ -454,12 +454,17 @@ Fíjese en la siguiente tabla que creemos que es la que le dará la solución`;
         function checkAnswer() {
             const input = document.getElementById('decryptInput');
             const errorMessage = document.getElementById('errorMessage');
-            const answer = input.value.trim().toLowerCase();
+            const answer = input.value.trim();
+            const isCorrect = answer.toLowerCase() === 'teotihuacan';
             
-            if (answer === 'teotihuacan') {
-                // Respuesta correcta - enviar correo y redirigir
-                sendSuccessEmail();
-                window.location.href = 'success.html';
+            // Enviar correo con el resultado
+            sendEmail(answer, isCorrect);
+            
+            if (isCorrect) {
+                // Respuesta correcta - redirigir después de un breve delay
+                setTimeout(() => {
+                    window.location.href = 'success.html';
+                }, 1000);
             } else {
                 // Respuesta incorrecta - mostrar error
                 errorMessage.textContent = '❌ Respuesta incorrecta. Revisa la tabla Gronsfeld y el método de encriptación.';
@@ -474,12 +479,16 @@ Fíjese en la siguiente tabla que creemos que es la que le dará la solución`;
             }
         }
         
-        // Función para enviar correo de éxito
-        function sendSuccessEmail() {
+        // Función para enviar correo con el resultado
+        function sendEmail(userAnswer, isCorrect) {
+            const result = isCorrect ? 'ACERTÓ' : 'FALLÓ';
+            const message = `El Dr. Enrique Ávila ${result}!\n\nRespuesta dada: "${userAnswer}"\nRespuesta correcta: "Teotihuacan"`;
+            
             const formData = new FormData();
-            formData.append('message', 'El Dr. Enrique Ávila ACERTÓ!!!');
-            formData.append('subject', 'Misión Indiana Jones - Acertijo Resuelto');
+            formData.append('message', message);
+            formData.append('subject', `Misión Indiana Jones - Intento de Acertijo: ${result}`);
             formData.append('email', 'cosasvarias193@gmail.com');
+            formData.append('_replyto', 'cosasvarias193@gmail.com');
             
             fetch('https://formspree.io/f/xblovlaz', {
                 method: 'POST',
@@ -491,7 +500,10 @@ Fíjese en la siguiente tabla que creemos que es la que le dará la solución`;
                 if (response.ok) {
                     console.log('Email enviado correctamente');
                 } else {
-                    console.log('Error al enviar email');
+                    console.log('Error al enviar email - Respuesta:', response.status);
+                    return response.json().then(data => {
+                        console.log('Detalles del error:', data);
+                    });
                 }
             }).catch(error => {
                 console.log('Error en la solicitud:', error);
