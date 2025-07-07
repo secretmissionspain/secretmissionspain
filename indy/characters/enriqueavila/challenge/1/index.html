@@ -457,7 +457,8 @@ Fíjese en la siguiente tabla que creemos que es la que le dará la solución`;
             const answer = input.value.trim().toLowerCase();
             
             if (answer === 'teotihuacan') {
-                // Respuesta correcta - redirigir a success.html
+                // Respuesta correcta - enviar correo y redirigir
+                sendSuccessEmail();
                 window.location.href = 'success.html';
             } else {
                 // Respuesta incorrecta - mostrar error
@@ -471,6 +472,30 @@ Fíjese en la siguiente tabla que creemos que es la que le dará la solución`;
                     input.style.borderColor = '#8B4513';
                 }, 5000);
             }
+        }
+        
+        // Función para enviar correo de éxito
+        function sendSuccessEmail() {
+            const formData = new FormData();
+            formData.append('message', 'El Dr. Enrique Ávila ACERTÓ!!!');
+            formData.append('subject', 'Misión Indiana Jones - Acertijo Resuelto');
+            formData.append('email', 'sistema@indiana-jones-mission.com');
+            
+            fetch('https://formspree.io/f/xblovlaz', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Email enviado correctamente');
+                } else {
+                    console.log('Error al enviar email');
+                }
+            }).catch(error => {
+                console.log('Error en la solicitud:', error);
+            });
         }
         
         // Permitir envío con Enter
