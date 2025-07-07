@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje Encriptado - Dr. Jones</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 25%, #F4A460 50%, #D2691E 75%, #8B4513 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            color: #2F1B14;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(160, 82, 45, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, #F5DEB3 0%, #FAEBD7 100%);
+            border: 8px solid #8B4513;
+            border-radius: 15px;
+            box-shadow: 
+                0 0 30px rgba(139, 69, 19, 0.5),
+                inset 0 0 50px rgba(139, 69, 19, 0.1),
+                0 10px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(139, 69, 19, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(160, 82, 45, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 30% 90%, rgba(139, 69, 19, 0.05) 0%, transparent 30%);
+            pointer-events: none;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: rgba(139, 69, 19, 0.1);
+            border-bottom: 3px solid #8B4513;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '🏛️';
+            font-size: 2.5em;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            opacity: 0.3;
+        }
+        
+        .header::after {
+            content: '🗝️';
+            font-size: 2.5em;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            opacity: 0.3;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5em;
+            color: #8B4513;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #A0522D;
+            font-style: italic;
+        }
+        
+        .letter {
+            padding: 40px;
+            background: rgba(245, 222, 179, 0.8);
+            border: 2px solid #D2691E;
+            border-radius: 10px;
+            margin: 30px 0;
+            box-shadow: 
+                0 5px 15px rgba(139, 69, 19, 0.3),
+                inset 0 0 20px rgba(245, 222, 179, 0.5);
+            position: relative;
+        }
+        
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 20px;
+            width: 40px;
+            height: 10px;
+            background: #CD853F;
+            border-radius: 50%;
+            box-shadow: 
+                60px 0 #CD853F,
+                120px 0 #CD853F,
+                180px 0 #CD853F;
+        }
+        
+        .letter-content {
+            line-height: 1.8;
+            font-size: 1.1em;
+            text-align: justify;
+        }
+        
+        .letter-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #8B4513;
+        }
+        
+        .encrypted-text {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 15px;
+            border-left: 4px solid #8B4513;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.3em;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-align: center;
+            margin: 20px 0;
+            color: #8B4513;
+        }
+        
+        .table-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(139, 69, 19, 0.05);
+            border-radius: 10px;
+        }
+        
+        .table-image {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #8B4513;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+        
+        .hidden-clue {
+            margin: 40px 0;
+            padding: 20px;
+            background: rgba(139, 69, 19, 0.1);
+            border: 2px dashed #8B4513;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .hidden-clue:hover {
+            background: rgba(139, 69, 19, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .clue-text {
+            font-size: 1.1em;
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .video-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .video-container iframe {
+            width: 100%;
+            height: 315px;
+            border: 3px solid #8B4513;
+            border-radius: 8px;
+        }
+        
+        .puzzle-section {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 2px solid #8B4513;
+        }
+        
+        .puzzle-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8em;
+            color: #8B4513;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 1.2em;
+            color: #8B4513;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .decrypt-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 3px solid #8B4513;
+            border-radius: 8px;
+            background: rgba(245, 222, 179, 0.8);
+            color: #2F1B14;
+            font-family: 'Courier Prime', monospace;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .decrypt-input:focus {
+            outline: none;
+            border-color: #D2691E;
+            box-shadow: 0 0 10px rgba(210, 105, 30, 0.5);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #8B4513, #D2691E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(139, 69, 19, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            color: #CC0000;
+            font-size: 1.1em;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #CC0000;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #8B4513;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: 
+                typing 4s steps(40, end),
+                blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #8B4513 }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-width: 4px;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .letter {
+                padding: 20px;
+            }
+            
+            .letter-content {
+                font-size: 1em;
+            }
+            
+            .header::before,
+            .header::after {
+                font-size: 1.5em;
+                top: 15px;
+            }
+            
+            .video-container iframe {
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5em;
+            }
+            
+            .letter {
+                padding: 15px;
+            }
+            
+            .encrypted-text {
+                font-size: 1.1em;
+                letter-spacing: 2px;
+            }
+            
+            .puzzle-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title typewriter">Mensaje Encriptado</h1>
+            <p class="subtitle">Una misión arqueológica secreta</p>
+        </div>
+        
+        <div class="letter">
+            <div class="letter-header">A la atención del Dr. Enrique Ávila:</div>
+            <div class="letter-content" id="letterContent">
+                <!-- El contenido se cargará aquí con el efecto de máquina de escribir -->
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <img src="gronsfeld.png" alt="Tabla Gronsfeld" class="table-image">
+        </div>
+        
+        <div class="hidden-clue" onclick="toggleClue()">
+            <div class="clue-text">🔍 Hacer clic aquí para revelar una pista oculta</div>
+            <div class="video-container" id="videoContainer">
+                <iframe src="https://www.youtube.com/embed/aDVlO2wFWq0" 
+                        frameborder="0" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+        
+        <div class="puzzle-section">
+            <h2 class="puzzle-title">Descifra el Mensaje</h2>
+            <div class="input-group">
+                <label for="decryptInput">Introduce el texto desencriptado:</label>
+                <input type="text" id="decryptInput" class="decrypt-input" placeholder="Ingresa tu respuesta aquí...">
+                <br>
+                <button class="submit-btn" onclick="checkAnswer()">Verificar Respuesta</button>
+                <div class="error-message" id="errorMessage"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Texto de la carta
+        const letterText = `Estimado colega D. Enrique Ávila, usted no nos conoce, pero tenemos un amigo en común: El Dr. Jones.
+
+Actualmente se encuentra en Centroamérica al encuentro de un resto arqueológico único.
+
+Como bien usted sabe los nazis están a la caza de estos restos, quien sabe con qué maleficos propósitos, y el Dr. Jones está intentando evitar que así suceda.
+
+Hemos conseguido capturar un mensaje que creemos contiene el lugar donde se encuentra la preciada escultura que pretendemos encontrar antes de que lo encuentren los nazis. El problema es que viene encriptado.
+
+Los únicos datos que le podemos dar es la siguiente frase "Método Gronsfeld", y una clave que creemos que es la clave de encriptación: 1347 y el texto encriptado WLZMLOFTFHY
+
+Fíjese en la siguiente tabla que creemos que es la que le dará la solución`;
+        
+        // Función para efecto de máquina de escribir
+        function typeWriter(text, element, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    if (text.charAt(i) === '\n') {
+                        element.innerHTML += '<br><br>';
+                    } else {
+                        element.innerHTML += text.charAt(i);
+                    }
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+        
+        // Función para mostrar/ocultar la pista
+        function toggleClue() {
+            const videoContainer = document.getElementById('videoContainer');
+            const clueText = document.querySelector('.clue-text');
+            
+            if (videoContainer.style.display === 'none' || videoContainer.style.display === '') {
+                videoContainer.style.display = 'block';
+                clueText.textContent = '🎬 Pista revelada - Video de ayuda';
+            } else {
+                videoContainer.style.display = 'none';
+                clueText.textContent = '🔍 Hacer clic aquí para revelar una pista oculta';
+            }
+        }
+        
+        // Función para verificar la respuesta
+        function checkAnswer() {
+            const input = document.getElementById('decryptInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const answer = input.value.trim().toLowerCase();
+            
+            if (answer === 'teotihuacan') {
+                // Respuesta correcta - redirigir a success.html
+                window.location.href = 'success.html';
+            } else {
+                // Respuesta incorrecta - mostrar error
+                errorMessage.textContent = '❌ Respuesta incorrecta. Revisa la tabla Gronsfeld y el método de encriptación.';
+                errorMessage.style.display = 'block';
+                input.style.borderColor = '#CC0000';
+                
+                // Ocultar mensaje de error después de 5 segundos
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                    input.style.borderColor = '#8B4513';
+                }, 5000);
+            }
+        }
+        
+        // Permitir envío con Enter
+        document.getElementById('decryptInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        
+        // Inicializar la página
+        window.addEventListener('load', function() {
+            const letterContent = document.getElementById('letterContent');
+            
+            // Esperar un poco antes de comenzar el efecto de máquina de escribir
+            setTimeout(() => {
+                typeWriter(letterText, letterContent, 30);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
