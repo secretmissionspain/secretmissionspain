@@ -1,1 +1,497 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura con Indiana Jones</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(45deg, #8B4513, #A0522D, #CD853F);
+            background-size: 400% 400%;
+            animation: backgroundShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            color: #2F1B14;
+        }
+        
+        @keyframes backgroundShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(245, 245, 220, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 3px solid #8B4513;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            padding: 30px;
+            text-align: center;
+            color: #F5F5DC;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border-bottom: 3px solid #654321;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .movie-poster {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .movie-poster img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 3px solid #8B4513;
+        }
+        
+        .letter {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            margin: 30px 0;
+            border-radius: 10px;
+            box-shadow: inset 0 0 20px rgba(139, 69, 19, 0.1);
+            border: 2px solid #D2B48C;
+            position: relative;
+        }
+        
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 20px;
+            background: #8B4513;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .letter-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            text-align: justify;
+        }
+        
+        .letter-greeting {
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        
+        .letter-signature {
+            text-align: right;
+            margin-top: 30px;
+            font-style: italic;
+        }
+        
+        .video-section {
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .questions-section {
+            margin: 40px 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #D2B48C;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(245, 245, 220, 0.7);
+            border-radius: 8px;
+            border-left: 4px solid #8B4513;
+        }
+        
+        .question h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .question input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #D2B48C;
+            border-radius: 5px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        
+        .question input[type="text"]:focus {
+            outline: none;
+            border-color: #8B4513;
+            box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #A0522D, #8B4513);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #dc3545;
+            display: none;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 0.1s steps(1, end);
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+                letter-spacing: 2px;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .letter {
+                padding: 25px;
+                margin: 20px 0;
+            }
+            
+            .letter-content {
+                font-size: 1em;
+            }
+            
+            .movie-poster img {
+                max-width: 250px;
+            }
+            
+            .questions-section {
+                padding: 20px;
+            }
+            
+            .question {
+                padding: 15px;
+            }
+            
+            .submit-btn {
+                padding: 12px;
+                font-size: 1.1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+                letter-spacing: 1px;
+            }
+            
+            .letter {
+                padding: 20px;
+            }
+            
+            .movie-poster img {
+                max-width: 200px;
+            }
+            
+            .question input[type="text"] {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            
+            .submit-btn {
+                font-size: 1em;
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Aventura con Indiana Jones</h1>
+            <p>Una misión secreta en el Palacio de Pankot</p>
+        </div>
+        
+        <div class="content">
+            <div class="movie-poster">
+                <img src="templo.png" alt="Poster de Indiana Jones y el Templo Maldito">
+            </div>
+            
+            <div class="letter">
+                <div class="letter-content" id="letterContent">
+                    <div class="letter-greeting">Estimado Kai Huang:</div>
+                    <p>Soy Tapon tu amigo, actualmente me encuentro con el profesor Indiana Jones. Estamos en medio de una aventura en un lugar increible.</p>
+                    <p>Tengo un video de cuando me encontraba con Indiana Jones en la India, en busca del templo maldito. Estamos en el Palacio de Pankot.</p>
+                    <p>En el vido mientras el Doctor Jones habla con otras dos personas, yo estoy con Willie, la mujer que nos acompaña en la aventura.</p>
+                    <p>Necesito que nos resulevas unas preguntas que se responderan durante el video</p>
+                    <div class="letter-signature">- Tapon</div>
+                </div>
+            </div>
+            
+            <div class="video-section">
+                <h2 style="margin-bottom: 20px; color: #8B4513;">El video está aquí:</h2>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/fvzhkxs33pw" 
+                            title="Indiana Jones - Palacio de Pankot" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            
+            <div class="questions-section">
+                <h2 style="margin-bottom: 30px; color: #8B4513; text-align: center;">Las preguntas son las siguientes:</h2>
+                
+                <form id="questionsForm">
+                    <div class="question">
+                        <h3>1. ¿En qué fecha comentan que se produjo un motín, durante la conversación que tiene Indiana Jones con los dos comensales?</h3>
+                        <input type="text" id="question1" name="question1" placeholder="Escribe el año">
+                    </div>
+                    
+                    <div class="question">
+                        <h3>2. Cuando llega la comida, a Willie, la mujer que acompaña a Tapon, le ponen un plato que no le gusta nada de nada, el personaje que está a su lado se refiere a este plato como...</h3>
+                        <p>Serpiente con <input type="text" id="question2" name="question2" placeholder="Completa la frase" style="display: inline-block; width: 200px; margin: 0 5px;"></p>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>3. ¿En la conversación del Doctor Jones con los dos comensales, este comenta de una piedra robada a un pueblo humilde, ¿Qué tipo de piedra es?</h3>
+                        <p>Piedra <input type="text" id="question3" name="question3" placeholder="Completa la frase" style="display: inline-block; width: 200px; margin: 0 5px;"></p>
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage"></div>
+                    
+                    <button type="submit" class="submit-btn">Enviar Respuestas</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Efecto de máquina de escribir
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+        
+        // Aplicar efecto de máquina de escribir cuando se carga la página
+        window.addEventListener('load', function() {
+            const letterContent = document.getElementById('letterContent');
+            const originalHTML = letterContent.innerHTML;
+            
+            // Extraer solo el texto sin las etiquetas HTML
+            const textContent = letterContent.textContent || letterContent.innerText;
+            
+            // Aplicar efecto de máquina de escribir
+            setTimeout(() => {
+                typeWriter(letterContent, textContent, 30);
+                
+                // Restaurar HTML original después del efecto
+                setTimeout(() => {
+                    letterContent.innerHTML = originalHTML;
+                }, textContent.length * 30 + 1000);
+            }, 1000);
+        });
+        
+        // Manejo del formulario
+        document.getElementById('questionsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const answers = {
+                question1: document.getElementById('question1').value.trim(),
+                question2: document.getElementById('question2').value.trim().toLowerCase(),
+                question3: document.getElementById('question3').value.trim().toLowerCase()
+            };
+            
+            const correctAnswers = {
+                question1: '1857',
+                question2: 'sorpresa',
+                question3: 'sagrada'
+            };
+            
+            let isCorrect = true;
+            let errors = [];
+            
+            // Verificar respuestas
+            if (answers.question1 !== correctAnswers.question1) {
+                isCorrect = false;
+                errors.push('Pregunta 1: Respuesta incorrecta');
+            }
+            
+            if (answers.question2 !== correctAnswers.question2) {
+                isCorrect = false;
+                errors.push('Pregunta 2: Respuesta incorrecta');
+            }
+            
+            if (answers.question3 !== correctAnswers.question3) {
+                isCorrect = false;
+                errors.push('Pregunta 3: Respuesta incorrecta');
+            }
+            
+            // Preparar datos para Formspree
+            const formData = new FormData();
+            
+            if (isCorrect) {
+                formData.append('message', 'Kai Huang ACERTO');
+                formData.append('respuesta1', answers.question1);
+                formData.append('respuesta2', answers.question2);
+                formData.append('respuesta3', answers.question3);
+            } else {
+                formData.append('message', 'Kai Huang FALLO');
+                formData.append('respuesta1', answers.question1);
+                formData.append('respuesta2', answers.question2);
+                formData.append('respuesta3', answers.question3);
+                formData.append('errores', errors.join(', '));
+            }
+            
+            // Enviar a Formspree
+            fetch('https://formspree.io/f/xblovlaz', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (isCorrect) {
+                    // Redirigir a success.html
+                    window.location.href = 'success.html';
+                } else {
+                    // Mostrar errores
+                    const errorDiv = document.getElementById('errorMessage');
+                    errorDiv.innerHTML = '<strong>Respuestas incorrectas:</strong><br>' + errors.join('<br>');
+                    errorDiv.style.display = 'block';
+                    
+                    // Scroll hacia el mensaje de error
+                    errorDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al enviar las respuestas. Por favor, inténtalo de nuevo.');
+            });
+        });
+        
+        // Efectos adicionales
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
